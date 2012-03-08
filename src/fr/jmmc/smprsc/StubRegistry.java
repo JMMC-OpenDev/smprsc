@@ -25,16 +25,14 @@ public class StubRegistry {
 
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(StubRegistry.class.getName());
-
     /** Internal singleton instance holder */
     private static StubRegistry _singleton = null;
-
     /** package name for JAXB generated code */
     private final static String SAMP_STUB_LIST_JAXB_PATH = "fr.jmmc.smprsc.data.model";
-
     /** SAMP stub list file i.e. "index.xml" */
-    public static final String SAMP_STUB_LIST_DATA_FILE = "fr/jmmc/smprsc/registry/__index__.xml";
-
+    public static final String SAMP_STUB_LIST_DATA_FILE_PATH = "fr/jmmc/smprsc/registry/";
+    /** SAMP stub list file i.e. "index.xml" */
+    public static final String SAMP_STUB_LIST_DATA_FILE_NAME = "__index__.xml";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
 
@@ -44,7 +42,7 @@ public class StubRegistry {
     private StubRegistry() {
         // Start JAXB
         jf = JAXBFactory.getInstance(SAMP_STUB_LIST_JAXB_PATH);
-}
+    }
 
     /**
      * Return the singleton instance of StubRegistry.
@@ -81,9 +79,20 @@ public class StubRegistry {
      * @return the list of SAMP stub application names.
      */
     public List<String> getKnownApplications() {
-        final URL fileURL = FileUtils.getResource(SAMP_STUB_LIST_DATA_FILE);
+        final URL fileURL = FileUtils.getResource(SAMP_STUB_LIST_DATA_FILE_PATH + SAMP_STUB_LIST_DATA_FILE_NAME);
         SampStubList list = loadData(fileURL);
         return list.getNames();
+    }
+
+    /**
+     * @return the list of SAMP stub application resource pathes.
+     */
+    public List<String> getKnownApplicationResourcePathes() {
+        List<String> list = getKnownApplications();
+        for (int i = 0; i < list.size(); i++) {
+            list.set(i, SAMP_STUB_LIST_DATA_FILE_PATH + list.get(i) + ".xml");
+        }
+        return list;
     }
 
     /**
@@ -106,6 +115,9 @@ public class StubRegistry {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(final String[] args) {
         List<String> names = StubRegistry.getInstance().getKnownApplications();
+        printList(names);
+
+        names = StubRegistry.getInstance().getKnownApplicationResourcePathes();
         printList(names);
     }
 }
