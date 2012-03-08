@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ *******************************************************************************
+ -->
+
+
+
+<!--
+Document   : SampStubList.xsd
+Author     : Sylvain LAFRASSE
+Description: Store JMMC AppLauncher Stub list.
+-->
+
+<!--
+            xmlns="http://www.jmmc.fr/jmcs/app/1.0"
+            targetNamespace="http://www.jmmc.fr/jmcs/app/1.0"
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+            jaxb:version="2.1" jaxb:extensionBindingPrefixes="xjc">
+
+    <xsd:annotation>           
+        <xsd:documentation>
+            JMMC AppLauncher Stub list.
+        </xsd:documentation>
+        <xsd:appinfo>
+
+            <!-- Comment the jaxb:globalBindings element in embedded xml schema used with XJC -->
+            <jaxb:globalBindings generateIsSetMethod="true">
+                <xjc:simple />
+            </jaxb:globalBindings>
+
+            <jaxb:schemaBindings>
+                <jaxb:package name="fr.jmmc.smprsc.data.model"/>
+            </jaxb:schemaBindings>
+
+        </xsd:appinfo>
+    </xsd:annotation>
+
+
+<!-- Elements -->
+
+    <xsd:element name="SampStubList" type="SampStubList">
+        <xsd:annotation>
+            <xsd:documentation>
+                JMMC AppLauncher Stub list.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+
+<!-- Class Types -->
+
+    <xsd:complexType name="SampStubList">
+        <xsd:annotation>
+            <xsd:documentation>
+                JMMC AppLauncher Stub list.
+            </xsd:documentation>
+        </xsd:annotation>
+            
+        <xsd:sequence>
+
+            <!-- Element Name -->
+            <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        SAMP application name.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+        </xsd:sequence>
+
+    </xsd:complexType>
+
+</xsd:schema>
