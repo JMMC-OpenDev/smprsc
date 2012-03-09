@@ -28,11 +28,13 @@ public class StubRegistry {
     /** Internal singleton instance holder */
     private static StubRegistry _singleton = null;
     /** package name for JAXB generated code */
-    private final static String SAMP_STUB_LIST_JAXB_PATH = "fr.jmmc.smprsc.data.model";
-    /** SAMP stub list file i.e. "index.xml" */
-    public static final String SAMP_STUB_LIST_DATA_FILE_PATH = "fr/jmmc/smprsc/registry/";
-    /** SAMP stub list file i.e. "index.xml" */
-    public static final String SAMP_STUB_LIST_DATA_FILE_NAME = "__index__.xml";
+    private final static String SAMP_STUB_LIST_JAXB_PACKAGE = "fr.jmmc.smprsc.data.model";
+    /** SAMP stub list file name */
+    public static final String SAMP_STUB_LIST_FILENAME = "__index__.xml";
+    /** SAMP stub application files path */
+    public static final String SAMP_STUB_DATA_FILE_PATH = "fr/jmmc/smprsc/registry/";
+    /** SAMP stub application files extension */
+    public static final String SAMP_STUB_DATA_FILE_EXTENSION = ".xml";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
 
@@ -41,7 +43,7 @@ public class StubRegistry {
      */
     private StubRegistry() {
         // Start JAXB
-        jf = JAXBFactory.getInstance(SAMP_STUB_LIST_JAXB_PATH);
+        jf = JAXBFactory.getInstance(SAMP_STUB_LIST_JAXB_PACKAGE);
     }
 
     /**
@@ -79,18 +81,18 @@ public class StubRegistry {
      * @return the list of SAMP stub application names.
      */
     public List<String> getKnownApplications() {
-        final URL fileURL = FileUtils.getResource(SAMP_STUB_LIST_DATA_FILE_PATH + SAMP_STUB_LIST_DATA_FILE_NAME);
+        final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + SAMP_STUB_LIST_FILENAME);
         SampStubList list = loadData(fileURL);
         return list.getNames();
     }
 
     /**
-     * @return the list of SAMP stub application resource pathes.
+     * @return the list of SAMP stub application resource paths.
      */
-    public List<String> getKnownApplicationResourcePathes() {
+    public List<String> getKnownApplicationResourcePaths() {
         List<String> list = getKnownApplications();
         for (int i = 0; i < list.size(); i++) {
-            list.set(i, SAMP_STUB_LIST_DATA_FILE_PATH + list.get(i) + ".xml");
+            list.set(i, SAMP_STUB_DATA_FILE_PATH + list.get(i) + SAMP_STUB_DATA_FILE_EXTENSION);
         }
         return list;
     }
@@ -117,7 +119,7 @@ public class StubRegistry {
         List<String> names = StubRegistry.getInstance().getKnownApplications();
         printList(names);
 
-        names = StubRegistry.getInstance().getKnownApplicationResourcePathes();
+        names = StubRegistry.getInstance().getKnownApplicationResourcePaths();
         printList(names);
     }
 }
