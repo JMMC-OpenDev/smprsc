@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="Category">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Daemon"/>
  *     &lt;enumeration value="Interferometry"/>
  *     &lt;enumeration value="Essentials"/>
  *   &lt;/restriction>
@@ -26,8 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum Category {
 
-    @XmlEnumValue("Daemon")
-    DAEMON("Daemon"),
     @XmlEnumValue("Interferometry")
     INTERFEROMETRY("Interferometry"),
     @XmlEnumValue("Essentials")

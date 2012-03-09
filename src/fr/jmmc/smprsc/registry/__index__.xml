@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SampStubList>
-    <family category="Daemon">
-        <application>AppLauncherTester</application>
-    </family>
     <family category="Interferometry">
+        <application>AppLauncherTester</application>
         <application>Aspro2</application>
         <application>LITpro</application>
         <application>SearchCal</application>

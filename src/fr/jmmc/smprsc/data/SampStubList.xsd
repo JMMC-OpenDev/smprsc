@@ -81,7 +81,6 @@ Description: Store JMMC AppLauncher Stub list.
     <!-- Define application famillies -->
     <xsd:simpleType name="Category">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="Daemon"/>
             <xsd:enumeration value="Interferometry"/>
             <xsd:enumeration value="Essentials"/>
         </xsd:restriction>
