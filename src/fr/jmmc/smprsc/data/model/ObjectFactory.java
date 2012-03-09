@@ -37,4 +37,12 @@ public class ObjectFactory {
         return new SampStubList();
     }
 
+    /**
+     * Create an instance of {@link Family }
+     * 
+     */
+    public Family createFamily() {
+        return new Family();
+    }
+
 }

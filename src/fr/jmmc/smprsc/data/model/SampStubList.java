@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="family" type="{}Family" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,49 +35,49 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SampStubList", propOrder = {
-    "names"
+    "families"
 })
 @XmlRootElement(name = "SampStubList")
 public class SampStubList {
 
-    @XmlElement(name = "name", required = true)
-    protected List<String> names;
+    @XmlElement(name = "family", required = true)
+    protected List<Family> families;
 
     /**
-     * Gets the value of the names property.
+     * Gets the value of the families property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the names property.
+     * This is why there is not a <CODE>set</CODE> method for the families property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getNames().add(newItem);
+     *    getFamilies().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link Family }
      * 
      * 
      */
-    public List<String> getNames() {
-        if (names == null) {
-            names = new ArrayList<String>();
+    public List<Family> getFamilies() {
+        if (families == null) {
+            families = new ArrayList<Family>();
         }
-        return this.names;
+        return this.families;
     }
 
-    public boolean isSetNames() {
-        return ((this.names!= null)&&(!this.names.isEmpty()));
+    public boolean isSetFamilies() {
+        return ((this.families!= null)&&(!this.families.isEmpty()));
     }
 
-    public void unsetNames() {
-        this.names = null;
+    public void unsetFamilies() {
+        this.families = null;
     }
 
 }

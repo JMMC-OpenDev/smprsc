@@ -6,6 +6,8 @@ package fr.jmmc.smprsc;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.smprsc.data.model.Category;
+import fr.jmmc.smprsc.data.model.Family;
 import fr.jmmc.smprsc.data.model.SampStubList;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -80,17 +82,22 @@ public class StubRegistry {
      * Try to load index file content.
      * @return the list of SAMP stub application names.
      */
-    public List<String> getKnownApplications() {
+    public List<String> getKnownApplicationsForCategory(Category category) {
         final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + SAMP_STUB_LIST_FILENAME);
         SampStubList list = loadData(fileURL);
-        return list.getNames();
+        for (Family family : list.getFamilies()) {
+            if (family.getCategory() == category) {
+                return family.getApplications();
+            }
+        }
+        return null;
     }
 
     /**
      * @return the list of SAMP stub application resource paths.
      */
-    public List<String> getKnownApplicationResourcePaths() {
-        List<String> list = getKnownApplications();
+    public List<String> getKnownApplicationResourcePathsForCategory(Category category) {
+        List<String> list = getKnownApplicationsForCategory(category);
         for (int i = 0; i < list.size(); i++) {
             list.set(i, SAMP_STUB_DATA_FILE_PATH + list.get(i) + SAMP_STUB_DATA_FILE_EXTENSION);
         }
@@ -116,11 +123,15 @@ public class StubRegistry {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(final String[] args) {
-        List<String> names = StubRegistry.getInstance().getKnownApplications();
-        printList(names);
+        for (Category category : Category.values()) {
+            System.out.println("category = " + category.value());
 
-        names = StubRegistry.getInstance().getKnownApplicationResourcePaths();
-        printList(names);
+            List<String> names = StubRegistry.getInstance().getKnownApplicationsForCategory(category);
+            printList(names);
+
+            names = StubRegistry.getInstance().getKnownApplicationResourcePathsForCategory(category);
+            printList(names);
+        }
     }
 }
 /*___oOo___*/

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SampStubList>
-    <name>Aladin</name>
-    <name>AppLauncherTester</name>
-    <name>Aspro2</name>
-    <name>LITpro</name>
-    <name>SearchCal</name>
-    <name>topcat</name>
+    <family category="Daemon">
+        <application>AppLauncherTester</application>
+    </family>
+    <family category="Interferometry">
+        <application>Aspro2</application>
+        <application>LITpro</application>
+        <application>SearchCal</application>
+    </family>
+    <family category="Essentials">
+        <application>Aladin</application>
+        <application>topcat</application>
+    </family>
 </SampStubList>

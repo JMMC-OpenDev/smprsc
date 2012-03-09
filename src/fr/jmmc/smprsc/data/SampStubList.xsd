@@ -65,17 +65,34 @@ Description: Store JMMC AppLauncher Stub list.
             
         <xsd:sequence>
 
-            <!-- Element Name -->
-            <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="unbounded">
+            <!-- Element Family -->
+            <xsd:element name="family" type="Family" minOccurs="1" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
-                        SAMP application name.
+                        SAMP Application Family
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
 
         </xsd:sequence>
 
+    </xsd:complexType>
+
+    <!-- Define application famillies -->
+    <xsd:simpleType name="Category">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Daemon"/>
+            <xsd:enumeration value="Interferometry"/>
+            <xsd:enumeration value="Essentials"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- Store SAMP application family -->
+    <xsd:complexType name="Family">
+        <xsd:sequence>
+            <xsd:element name="application" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="category" type="Category" use="required"/>
     </xsd:complexType>
 
 </xsd:schema>
