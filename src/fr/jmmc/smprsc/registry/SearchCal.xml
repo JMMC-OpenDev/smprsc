@@ -5,6 +5,10 @@
         <value>SearchCal</value>
     </metadata>
     <metadata>
+        <key>samp.icon.url</key>
+        <value>http://apps.jmmc.fr/~sclws/SearchCal/AppIcon.png</value>
+    </metadata>
+    <metadata>
         <key>affiliation.feedback</key>
         <value>http://jmmc.fr/feedback/</value>
     </metadata>

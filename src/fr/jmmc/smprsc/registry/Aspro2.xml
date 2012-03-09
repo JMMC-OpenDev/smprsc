@@ -5,6 +5,10 @@
         <value>Aspro2</value>
     </metadata>
     <metadata>
+        <key>samp.icon.url</key>
+        <value>http://www.jmmc.fr/images/aspro2-6464.png</value>
+    </metadata>
+    <metadata>
         <key>affiliation.feedback</key>
         <value>http://jmmc.fr/feedback/</value>
     </metadata>

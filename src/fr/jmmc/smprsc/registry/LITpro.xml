@@ -5,6 +5,10 @@
         <value>LITpro</value>
     </metadata>
     <metadata>
+        <key>samp.icon.url</key>
+        <value>http://www.jmmc.fr/images/litpro6464ws.jpg</value>
+    </metadata>
+    <metadata>
         <key>affiliation.feedback</key>
         <value>http://jmmc.fr/feedback/</value>
     </metadata>
