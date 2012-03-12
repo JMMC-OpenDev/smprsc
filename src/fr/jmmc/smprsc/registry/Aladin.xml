@@ -13,6 +13,10 @@
         <value>http://aladin.u-strasbg.fr/aladin_large.gif</value>
     </metadata>
     <metadata>
+        <key>x-samp.jnlp.url</key>
+        <value>http://aladin.u-strasbg.fr/java/aladin.jnlp</value>
+    </metadata>
+    <metadata>
         <key>samp.documentation.url</key>
         <value>http://aladin.u-strasbg.fr/java/FAQ.htx</value>
     </metadata>

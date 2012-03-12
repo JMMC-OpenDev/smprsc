@@ -9,6 +9,10 @@
         <value>http://www.jmmc.fr/images/aspro2-6464.png</value>
     </metadata>
     <metadata>
+        <key>x-samp.jnlp.url</key>
+        <value>http://apps.jmmc.fr/~swmgr/Aspro2/Aspro2.jnlp</value>
+    </metadata>
+    <metadata>
         <key>affiliation.feedback</key>
         <value>http://jmmc.fr/feedback/</value>
     </metadata>

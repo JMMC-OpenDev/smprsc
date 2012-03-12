@@ -3,8 +3,8 @@
     <family category="Interferometry">
         <application>AppLauncherTester</application>
         <application>Aspro2</application>
-        <application>LITpro</application>
         <application>SearchCal</application>
+        <application>LITpro</application>
     </family>
     <family category="Essentials">
         <application>Aladin</application>

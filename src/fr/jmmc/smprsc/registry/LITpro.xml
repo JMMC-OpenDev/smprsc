@@ -9,6 +9,10 @@
         <value>http://www.jmmc.fr/images/litpro6464ws.jpg</value>
     </metadata>
     <metadata>
+        <key>x-samp.jnlp.url</key>
+        <value>http://jmmc.fr/~swmgr/LITpro/LITpro.jnlp</value>
+    </metadata>
+    <metadata>
         <key>affiliation.feedback</key>
         <value>http://jmmc.fr/feedback/</value>
     </metadata>
