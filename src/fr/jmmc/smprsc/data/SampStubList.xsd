@@ -78,7 +78,7 @@ Description: Store JMMC AppLauncher Stub list.
 
     </xsd:complexType>
 
-    <!-- Define application famillies -->
+    <!-- Define application families -->
     <xsd:simpleType name="Category">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="Interferometry"/>
