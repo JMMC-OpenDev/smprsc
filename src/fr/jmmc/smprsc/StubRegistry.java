@@ -13,6 +13,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public class StubRegistry {
     public static final String SAMP_STUB_DATA_FILE_PATH = "fr/jmmc/smprsc/registry/";
     /** SAMP stub application files extension */
     public static final String SAMP_STUB_DATA_FILE_EXTENSION = ".xml";
+    /** Application icon files extension */
+    public static final String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
 
@@ -114,6 +117,27 @@ public class StubRegistry {
             System.out.println("stub[" + i + "/" + names.size() + "] = " + name);
             i++;
         }
+    }
+
+    /**
+     * Try to load embedded icon for given application name.
+     * 
+     * @param applicationName the application name of the sought icon.
+     * @return the icon if found; null otherwise.
+     */
+    public static ImageIcon getEmbeddedIconForApplication(String applicationName) {
+        ImageIcon icon = null;
+
+        try {
+            final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_ICON_FILE_EXTENSION);
+            if (fileURL != null) {
+                icon = new ImageIcon(fileURL);
+            }
+        } catch (IllegalStateException ise) {
+            _logger.warn("Could not find '{}' embedded icon.", applicationName);
+        }
+
+        return icon;
     }
 
     /**
