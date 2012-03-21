@@ -8,7 +8,8 @@
     </family>
     <family category="Essentials">
         <application>Aladin</application>
-        <application>topcat</application>
         <application>VOSpec</application>
+        <application>topcat</application>
+            <application>splat</application>
     </family>
 </SampStubList>
