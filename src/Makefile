@@ -98,7 +98,8 @@ JARFILES        = smprsc
 #
 # <brief description of smprsc jar files>
 smprsc_DIRS     = fr
-smprsc_EXTRAS   = fr/jmmc/smprsc/registry/*.xml
+smprsc_EXTRAS   = fr/jmmc/smprsc/registry/*.xml \
+                  fr/jmmc/smprsc/registry/*.png
 
 #
 # Java programs
