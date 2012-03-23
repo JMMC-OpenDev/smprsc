@@ -64,9 +64,15 @@ Description: ANT script.
         <fail unless="smprsc.check" message="smprsc project does not exist in ${smprsc} !" />
     </target>
 
-    <target name="genXsdCode" depends="checkAppLauncherRsc" description="Generates the Java code from XML schemas (XSD).">
+    <target name="genListXsdCode" depends="checkAppLauncherRsc" description="Generates the Java code from List XML schemas (XSD).">
         <echo>Generating Java code for SampStubList.xsd</echo>
-        <mkdir dir="${sources}/fr/jmmc/smprsc/data/model" />
-        <xjc destdir="${sources}" schema="${sources}/fr/jmmc/smprsc/data/SampStubList.xsd"/>
+        <mkdir dir="${sources}/fr/jmmc/smprsc/data/list/model" />
+        <xjc destdir="${sources}" schema="${sources}/fr/jmmc/smprsc/data/list/SampStubList.xsd"/>
+    </target>
+
+    <target name="genStubXsdCode" depends="checkAppLauncherRsc" description="Generates the Java code from List XML schemas (XSD).">
+        <echo>Generating Java code for SampStubDescriptor.xsd</echo>
+        <mkdir dir="${sources}/fr/jmmc/smprsc/data/stub/model" />
+        <xjc destdir="${sources}" schema="${sources}/fr/jmmc/smprsc/data/stub/SampStubDescriptor.xsd"/>
     </target>
 </project>

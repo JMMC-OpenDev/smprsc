@@ -6,9 +6,9 @@ package fr.jmmc.smprsc;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.smprsc.data.model.Category;
-import fr.jmmc.smprsc.data.model.Family;
-import fr.jmmc.smprsc.data.model.SampStubList;
+import fr.jmmc.smprsc.data.list.model.Category;
+import fr.jmmc.smprsc.data.list.model.Family;
+import fr.jmmc.smprsc.data.list.model.SampStubList;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +32,7 @@ public class StubRegistry {
     /** Internal singleton instance holder */
     private static StubRegistry _singleton = null;
     /** package name for JAXB generated code */
-    private final static String SAMP_STUB_LIST_JAXB_PACKAGE = "fr.jmmc.smprsc.data.model";
+    private final static String SAMP_STUB_LIST_JAXB_PACKAGE = "fr.jmmc.smprsc.data.list.model";
     /** SAMP stub list file name */
     public static final String SAMP_STUB_LIST_FILENAME = "__index__.xml";
     /** SAMP stub application files path */
