@@ -12,6 +12,7 @@ import fr.jmmc.smprsc.data.model.SampStubList;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
@@ -42,6 +43,8 @@ public class StubRegistry {
     public static final String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
+    /** Category's application names cache */
+    private HashMap<Category, List<String>> _categoryApplicationNames;
 
     /**
      * Private constructor that must be empty.
@@ -49,6 +52,16 @@ public class StubRegistry {
     private StubRegistry() {
         // Start JAXB
         jf = JAXBFactory.getInstance(SAMP_STUB_LIST_JAXB_PACKAGE);
+
+        // Try to load __index__.xml resource
+        final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + SAMP_STUB_LIST_FILENAME);
+        final SampStubList sampStubList = loadData(fileURL);
+
+        // Cache all application names for each category
+        _categoryApplicationNames = new HashMap<Category, List<String>>();
+        for (Family family : sampStubList.getFamilies()) {
+            _categoryApplicationNames.put(family.getCategory(), family.getApplications());
+        }
     }
 
     /**
@@ -60,11 +73,75 @@ public class StubRegistry {
         // Build new reference if singleton does not already exist or return previous reference
         if (_singleton == null) {
             _logger.debug("StubRegistry.getInstance()");
-
+            
             _singleton = new StubRegistry();
         }
-
+        
         return _singleton;
+    }
+
+    /**
+     * Try to load index file content.
+     * @return the list of SAMP stub application names, null otherwise.
+     */
+    public List<String> getCategoryApplicationNames(Category category) {
+        return _categoryApplicationNames.get(category);
+    }
+
+    /**
+     * @return the list of SAMP stub application resource paths, null otherwise.
+     */
+    public List<String> getCategoryApplicationResourcePathes(Category category) {
+
+        // Get category's application names
+        final List<String> applicationNameList = getCategoryApplicationNames(category);
+        if (applicationNameList == null) {
+            return null;
+        }
+
+        // Forge each application description file resource path
+        for (int i = 0; i < applicationNameList.size(); i++) {
+            applicationNameList.set(i, SAMP_STUB_DATA_FILE_PATH + applicationNameList.get(i) + SAMP_STUB_DATA_FILE_EXTENSION);
+        }
+        return applicationNameList;
+    }
+
+    /**
+     * Try to load embedded icon for given application name.
+     * 
+     * @param applicationName the application name of the sought icon.
+     * @return the icon if found, null otherwise.
+     */
+    public static ImageIcon getEmbeddedApplicationIcon(String applicationName) {
+        
+        ImageIcon icon = null;
+        
+        try {
+            // Forge icon resource path
+            final String iconResourcePath = SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_ICON_FILE_EXTENSION;
+
+            // Try to load application icon resource
+            final URL fileURL = FileUtils.getResource(iconResourcePath);
+            if (fileURL != null) {
+                icon = new ImageIcon(fileURL);
+            }
+        } catch (IllegalStateException ise) {
+            _logger.warn("Could not find '{}' embedded icon.", applicationName);
+        }
+        
+        return icon;
+    }
+
+    /**
+     * Print the given name list on the standard output.
+     * @param names string list to output
+     */
+    public static void printList(List<String> names) {
+        int i = 1;
+        for (String name : names) {
+            System.out.println("stub[" + i + "/" + names.size() + "] = " + name);
+            i++;
+        }
     }
 
     /** Invoke JAXB to load XML file */
@@ -82,65 +159,6 @@ public class StubRegistry {
     }
 
     /**
-     * Try to load index file content.
-     * @return the list of SAMP stub application names.
-     */
-    public List<String> getKnownApplicationsForCategory(Category category) {
-        final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + SAMP_STUB_LIST_FILENAME);
-        SampStubList list = loadData(fileURL);
-        for (Family family : list.getFamilies()) {
-            if (family.getCategory() == category) {
-                return family.getApplications();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return the list of SAMP stub application resource paths.
-     */
-    public List<String> getKnownApplicationResourcePathsForCategory(Category category) {
-        List<String> list = getKnownApplicationsForCategory(category);
-        for (int i = 0; i < list.size(); i++) {
-            list.set(i, SAMP_STUB_DATA_FILE_PATH + list.get(i) + SAMP_STUB_DATA_FILE_EXTENSION);
-        }
-        return list;
-    }
-
-    /**
-     * Print the given name list on the standard output.
-     * @param names string list to output
-     */
-    public static void printList(List<String> names) {
-        int i = 1;
-        for (String name : names) {
-            System.out.println("stub[" + i + "/" + names.size() + "] = " + name);
-            i++;
-        }
-    }
-
-    /**
-     * Try to load embedded icon for given application name.
-     * 
-     * @param applicationName the application name of the sought icon.
-     * @return the icon if found; null otherwise.
-     */
-    public static ImageIcon getEmbeddedIconForApplication(String applicationName) {
-        ImageIcon icon = null;
-
-        try {
-            final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_ICON_FILE_EXTENSION);
-            if (fileURL != null) {
-                icon = new ImageIcon(fileURL);
-            }
-        } catch (IllegalStateException ise) {
-            _logger.warn("Could not find '{}' embedded icon.", applicationName);
-        }
-
-        return icon;
-    }
-
-    /**
      * Main entry point
      *
      * @param args command line arguments (open file ...)
@@ -148,12 +166,17 @@ public class StubRegistry {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(final String[] args) {
         for (Category category : Category.values()) {
+            System.out.println("-------------------------------------------------------");
             System.out.println("category = " + category.value());
-
-            List<String> names = StubRegistry.getInstance().getKnownApplicationsForCategory(category);
-            printList(names);
-
-            names = StubRegistry.getInstance().getKnownApplicationResourcePathsForCategory(category);
+            System.out.println("-------------------------------------------------------");
+            
+            List<String> names = StubRegistry.getInstance().getCategoryApplicationNames(category);
+            for (String name : names) {
+                final ImageIcon iconResourcePath = StubRegistry.getEmbeddedApplicationIcon(name);
+                System.out.println("iconResourcePath[" + name + "] = " + (iconResourcePath == null ? "'null'" : iconResourcePath.getDescription()));
+            }
+            
+            names = StubRegistry.getInstance().getCategoryApplicationResourcePathes(category);
             printList(names);
         }
     }
