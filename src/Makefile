@@ -166,6 +166,8 @@ install_html:
 	chmod 777 ./public_html/spool
 	cp -arf ./public_html/* $(HTML_DEST)
 	cp -af fr/jmmc/smprsc/registry $(HTML_DEST)
+	cp -af fr/jmmc/smprsc/data/stub/SampStubDescriptor.xsd $(HTML_DEST)
+
 	@echo " . . . HTML installation done"
 
 install : install_html install_all
