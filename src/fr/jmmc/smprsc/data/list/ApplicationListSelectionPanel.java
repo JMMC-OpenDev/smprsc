@@ -19,19 +19,10 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeSelectionModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author lafrasse
  */
-public class ApplicationListSelectionPanel extends JPanel {
+public final class ApplicationListSelectionPanel extends JPanel {
 
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationListSelectionPanel.class.getName());
@@ -181,6 +172,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         tree.getCheckBoxTreeSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 
+            @Override
             public void valueChanged(TreeSelectionEvent e) {
 
                 TreePath[] checkedPaths = tree.getCheckBoxTreeSelectionModel().getSelectionPaths();
@@ -198,6 +190,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
     private class ApplicationIconRenderer extends DefaultTreeCellRenderer {
 
+        @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
