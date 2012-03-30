@@ -360,6 +360,12 @@ public final class ApplicationListSelectionPanel extends JPanel {
         frame.pack();
         frame.setVisible(true);
 
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
+            _logger.error("", ex);
+        }
+
         List<String> specificApplicationNames = new ArrayList<String>();
         specificApplicationNames.add("Aspro2");
         specificApplicationNames.add("SearchCal");
