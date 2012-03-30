@@ -6,7 +6,7 @@ package fr.jmmc.smprsc.data.stub;
 import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
 import fr.jmmc.jmcs.gui.MainMenuBar;
-import fr.jmmc.jmcs.gui.WindowCenterer;
+import fr.jmmc.jmcs.gui.util.WindowCenterer;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

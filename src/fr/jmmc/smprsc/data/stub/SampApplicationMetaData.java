@@ -3,7 +3,7 @@
  ******************************************************************************/
 package fr.jmmc.smprsc.data.stub;
 
-import fr.jmmc.jmcs.gui.SwingUtils;
+import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
 import fr.jmmc.jmcs.network.Http;
