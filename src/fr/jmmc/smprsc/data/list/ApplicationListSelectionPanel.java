@@ -351,7 +351,6 @@ public final class ApplicationListSelectionPanel extends JPanel {
                 _logger.trace("Unchecked '" + currentRowApplicationName + "' application.");
             }
         }
-        System.out.println("");
     }
 
     public static void main(String[] args) {
