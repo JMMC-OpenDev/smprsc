@@ -10,6 +10,6 @@
         <application>Aladin</application>
         <application>VOSpec</application>
         <application>topcat</application>
-            <application>splat</application>
+        <application>splat</application>
     </family>
 </SampStubList>
