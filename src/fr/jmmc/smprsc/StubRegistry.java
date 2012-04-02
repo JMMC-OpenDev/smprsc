@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.ivoa.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ public class StubRegistry {
     private final JAXBFactory jf;
     /** Category's application names cache */
     private static HashMap<Category, List<String>> _categoryApplicationNames;
+    /** Category's visible application names cache */
+    private static HashMap<Category, List<String>> _categoryVisibleApplicationNames;
 
     /**
      * Private constructor that must be empty.
@@ -60,8 +63,22 @@ public class StubRegistry {
 
         // Cache all application names for each category
         _categoryApplicationNames = new HashMap<Category, List<String>>();
+        _categoryVisibleApplicationNames = new HashMap<Category, List<String>>();
         for (Family family : sampStubList.getFamilies()) {
-            _categoryApplicationNames.put(family.getCategory(), family.getApplications());
+
+            final List<String> applicationList = family.getApplications();
+            _categoryApplicationNames.put(family.getCategory(), applicationList);
+
+            // Build the list of visible application for the current category
+            List<String> visibleCategoryApplications = new ArrayList<String>();
+            for (String applicationName : applicationList) {
+                if (getEmbeddedApplicationIcon(applicationName) != null) {
+                    visibleCategoryApplications.add(applicationName);
+                }
+            }
+            if (!visibleCategoryApplications.isEmpty()) {
+                _categoryVisibleApplicationNames.put(family.getCategory(), visibleCategoryApplications);
+            }
         }
     }
 
@@ -81,29 +98,33 @@ public class StubRegistry {
         return _singleton;
     }
 
+    /**
+     * @return the complete resource path of the given application.
+     */
     public static String getApplicationResourcePath(final String applicationName) {
         return SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_DATA_FILE_EXTENSION;
     }
 
     /**
-     * Try to load index file content.
-     * @return the list of SAMP stub application names, null otherwise.
+     * @return the list of SAMP stub visible application names for the given category, null otherwise.
      */
-    public static List<String> getCategoryApplicationNames(Category category) {
+    public static List<String> getCategoryVisibleApplicationNames(Category category) {
         getInstance();
-        return _categoryApplicationNames.get(category);
+        return _categoryVisibleApplicationNames.get(category);
     }
 
     /**
-     * @return the list of SAMP stub application resource paths.
+     * @return the list of SAMP stub application resource paths for the given category.
      */
     public static List<String> getCategoryApplicationResourcePaths(Category category) {
+
+        getInstance();
 
         // Get category's application names
         final List<String> applicationPathList = new ArrayList<String>();
 
         // Forge each application description file resource path
-        for (String applicationName : getCategoryApplicationNames(category)) {
+        for (String applicationName : _categoryApplicationNames.get(category)) {
             applicationPathList.add(getApplicationResourcePath(applicationName));
         }
 
@@ -136,18 +157,6 @@ public class StubRegistry {
         return icon;
     }
 
-    /**
-     * Print the given name list on the standard output.
-     * @param names string list to output
-     */
-    public static void printList(List<String> names) {
-        int i = 1;
-        for (String name : names) {
-            System.out.println("stub[" + i + "/" + names.size() + "] = " + name);
-            i++;
-        }
-    }
-
     /** Invoke JAXB to load XML file */
     private SampStubList loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
 
@@ -169,20 +178,23 @@ public class StubRegistry {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(final String[] args) {
+
+        List<String> list = null;
+
         for (Category category : Category.values()) {
+
             System.out.println("-------------------------------------------------------");
             System.out.println("category = " + category.value());
             System.out.println("-------------------------------------------------------");
 
-            List<String> names = StubRegistry.getCategoryApplicationNames(category);
-            for (String name : names) {
-                final ImageIcon iconResourcePath = StubRegistry.getEmbeddedApplicationIcon(name);
-                System.out.println("iconResourcePath[" + name + "] = " + (iconResourcePath == null ? "'null'" : iconResourcePath.getDescription()));
-            }
+            list = StubRegistry.getCategoryVisibleApplicationNames(category);
+            System.out.println("Visible apps : " + CollectionUtils.toString(list, ", ", "{", "}"));
 
-            names = StubRegistry.getCategoryApplicationResourcePaths(category);
-            printList(names);
+            list = StubRegistry.getCategoryApplicationResourcePaths(category);
+            System.out.println("Application paths : " + CollectionUtils.toString(list, ", ", "{", "}"));
+
+            System.out.println("");
         }
-            }
-        }
+    }
+}
 /*___oOo___*/
