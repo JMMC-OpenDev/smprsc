@@ -12,6 +12,7 @@ import fr.jmmc.smprsc.data.list.model.SampStubList;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -94,22 +95,19 @@ public class StubRegistry {
     }
 
     /**
-     * @return the list of SAMP stub application resource paths, null otherwise.
+     * @return the list of SAMP stub application resource paths.
      */
-    public static List<String> getCategoryApplicationResourcePathes(Category category) {
+    public static List<String> getCategoryApplicationResourcePaths(Category category) {
 
         // Get category's application names
-        final List<String> applicationNameList = getCategoryApplicationNames(category);
-        if (applicationNameList == null) {
-            return null;
-        }
+        final List<String> applicationPathList = new ArrayList<String>();
 
         // Forge each application description file resource path
-        for (int i = 0; i < applicationNameList.size(); i++) {
-            final String applicationName = applicationNameList.get(i);
-            applicationNameList.set(i, getApplicationResourcePath(applicationName));
+        for (String applicationName : getCategoryApplicationNames(category)) {
+            applicationPathList.add(getApplicationResourcePath(applicationName));
         }
-        return applicationNameList;
+
+        return applicationPathList;
     }
 
     /**
@@ -176,15 +174,15 @@ public class StubRegistry {
             System.out.println("category = " + category.value());
             System.out.println("-------------------------------------------------------");
 
-            List<String> names = StubRegistry.getInstance().getCategoryApplicationNames(category);
+            List<String> names = StubRegistry.getCategoryApplicationNames(category);
             for (String name : names) {
                 final ImageIcon iconResourcePath = StubRegistry.getEmbeddedApplicationIcon(name);
                 System.out.println("iconResourcePath[" + name + "] = " + (iconResourcePath == null ? "'null'" : iconResourcePath.getDescription()));
             }
 
-            names = StubRegistry.getInstance().getCategoryApplicationResourcePathes(category);
+            names = StubRegistry.getCategoryApplicationResourcePaths(category);
             printList(names);
         }
-    }
-}
+            }
+        }
 /*___oOo___*/
