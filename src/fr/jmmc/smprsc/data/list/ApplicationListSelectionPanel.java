@@ -23,6 +23,7 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
+import org.ivoa.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,7 @@ public final class ApplicationListSelectionPanel extends JPanel {
     private static final int TREE_WIDTH = 200;
     private final DefaultMutableTreeNode _treeDataModel;
     private static final List<String> ALL = null;
+    private static final String ROOT_NODE_NAME = "Root";
     private final CheckBoxTree _checkBoxTree;
     private static final int ICON_SIZE = 16;
     // Description stuff
@@ -69,7 +71,7 @@ public final class ApplicationListSelectionPanel extends JPanel {
 
     private DefaultMutableTreeNode populateTreeDataModel() {
 
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root");
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(ROOT_NODE_NAME);
 
         // For each known application category
         for (Category applicationCategory : Category.values()) {
@@ -79,24 +81,19 @@ public final class ApplicationListSelectionPanel extends JPanel {
             rootNode.add(categoryNode);
             _logger.trace("Loading applications for category '" + categoryName + "':");
 
-            // Gets all category's application names
-            for (String applicationName : StubRegistry.getCategoryApplicationNames(applicationCategory)) {
+            // Gets all category's visible application names
+            for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(applicationCategory)) {
 
                 // Add the application node only if it is a visible one
                 ImageIcon applicationIcon = StubRegistry.getEmbeddedApplicationIcon(applicationName);
-                if (applicationIcon != null) {
+                // Load application icons once and for all
+                ImageIcon resizedApplicationIcon = ImageUtils.getScaledImageIcon(applicationIcon, ICON_SIZE, ICON_SIZE);
+                _cachedApplicationIcons.put(applicationName, resizedApplicationIcon);
 
-                    // Load application icons once and for all
-                    ImageIcon resizedApplicationIcon = ImageUtils.getScaledImageIcon(applicationIcon, ICON_SIZE, ICON_SIZE);
-                    _cachedApplicationIcons.put(applicationName, resizedApplicationIcon);
-
-                    // Create application node
-                    DefaultMutableTreeNode applicationNode = new DefaultMutableTreeNode(applicationName);
-                    categoryNode.add(applicationNode);
-                    _logger.trace("\t- found application '" + applicationName + "' with icon.");
-                } else {
-                    _logger.trace("\t- skipped application '" + applicationName + "' with NO icon.");
-                }
+                // Create application node
+                DefaultMutableTreeNode applicationNode = new DefaultMutableTreeNode(applicationName);
+                categoryNode.add(applicationNode);
+                _logger.trace("\t- found application '" + applicationName + "' with icon.");
             }
         }
 
@@ -175,15 +172,51 @@ public final class ApplicationListSelectionPanel extends JPanel {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
 
+                List<String> checkedApplicationList = new ArrayList<String>();
+
+                // Get the currently checked paths list
                 TreePath[] checkedPaths = tree.getCheckBoxTreeSelectionModel().getSelectionPaths();
-                if (checkedPaths == null) {
-                    return;
+                if (checkedPaths != null) {
+
+                    // For each checked box
+                    for (TreePath checkedPath : checkedPaths) {
+
+                        final Object checkedBox = checkedPath.getLastPathComponent();
+                        final String checkedBoxName = checkedBox.toString();
+                        _logger.debug("Discovered that '" + checkedBoxName + "' is checked.");
+
+                        // If the current checked box is not a leaf
+                        DefaultTreeModel treeModel = new DefaultTreeModel(_treeDataModel);
+                        if (!treeModel.isLeaf(checkedBox)) {
+
+                            _logger.trace("But '" + checkedBoxName + "' is NOT a LEAF - Going deeper :");
+
+                            // Get all the applications in the current 'directory' node
+                            for (Category category : Category.values()) {
+
+                                // List category applications (or all applications if ROOT node)
+                                if ((checkedBoxName.equals(ROOT_NODE_NAME)) || (checkedBoxName.equals(category.value()))) {
+
+                                    // Retrieve all the current category visible applications
+                                    for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(category)) {
+
+                                        _logger.trace("\t- made of visible application = " + applicationName);
+                                        checkedApplicationList.add(applicationName);
+                                    }
+                                }
+                            }
+                        } else {
+                            checkedApplicationList.add(checkedBoxName);
+                        }
+                    }
+                } else {
+                    _logger.debug("Discovered that NOTHING is checked.");
+
                 }
 
-                for (TreePath checkedPath : checkedPaths) {
-                    String checkedApplicationName = checkedPath.getLastPathComponent().toString();
-                    _logger.trace("Discovered that '" + checkedApplicationName + "' is checked.");
-                }
+                System.out.println("Selected applications : " + CollectionUtils.toString(checkedApplicationList, ", ", "{", "}") + ".");
+
+                // @TODO : Store selection list in preference.
             }
         });
     }
@@ -330,6 +363,8 @@ public final class ApplicationListSelectionPanel extends JPanel {
 
     /** @applicationNames the list of application names to select, or null for all. */
     public void setCheckedApplicationNames(List<String> applicationNames) {
+
+        // @TODO : Set selection list from preference.
 
         final CheckBoxTreeSelectionModel checkBoxTreeSelectionModel = _checkBoxTree.getCheckBoxTreeSelectionModel();
 
