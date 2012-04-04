@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author lafrasse
  */
-public final class ApplicationListSelectionPanel extends JPanel {
+public class ApplicationListSelectionPanel extends JPanel {
 
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationListSelectionPanel.class.getName());
@@ -40,6 +40,7 @@ public final class ApplicationListSelectionPanel extends JPanel {
     // Cached application data
     private final HashMap<String, ImageIcon> _cachedApplicationIcons = new HashMap<String, ImageIcon>();
     private final HashMap<String, String> _cachedApplicationDescriptions = new HashMap<String, String>();
+    private boolean _programaticCheckingUnderway = true;
     // Tree stuff
     private static final int TREE_WIDTH = 200;
     private final DefaultMutableTreeNode _treeDataModel;
@@ -214,11 +215,15 @@ public final class ApplicationListSelectionPanel extends JPanel {
 
                 }
 
-                System.out.println("Selected applications : " + CollectionUtils.toString(checkedApplicationList, ", ", "{", "}") + ".");
-
-                // @TODO : Store selection list in preference.
+                if (! _programaticCheckingUnderway) {
+                    checkedApplicationChanged(checkedApplicationList);
+                }
             }
         });
+    }
+
+    protected void checkedApplicationChanged(List<String> checkedApplicationList) {
+        System.out.println("Selected applications : " + CollectionUtils.toString(checkedApplicationList, ", ", "{", "}") + ".");
     }
 
     private class ApplicationIconRenderer extends DefaultTreeCellRenderer {
@@ -350,7 +355,7 @@ public final class ApplicationListSelectionPanel extends JPanel {
     }
 
     /** @return the list of application names selected by the user */
-    public List<String> getCheckedApplicationNames() {
+    public final List<String> getCheckedApplicationNames() {
         List<String> selectedApplicationNames = new ArrayList<String>();
 
         for (TreePath selectedPath : _checkBoxTree.getCheckBoxTreeSelectionModel().getSelectionPaths()) {
@@ -362,9 +367,9 @@ public final class ApplicationListSelectionPanel extends JPanel {
     }
 
     /** @applicationNames the list of application names to select, or null for all. */
-    public void setCheckedApplicationNames(List<String> applicationNames) {
+    public final void setCheckedApplicationNames(List<String> applicationNames) {
 
-        // @TODO : Set selection list from preference.
+        _programaticCheckingUnderway = true;
 
         final CheckBoxTreeSelectionModel checkBoxTreeSelectionModel = _checkBoxTree.getCheckBoxTreeSelectionModel();
 
@@ -386,6 +391,8 @@ public final class ApplicationListSelectionPanel extends JPanel {
                 _logger.trace("Unchecked '" + currentRowApplicationName + "' application.");
             }
         }
+
+        _programaticCheckingUnderway = false;
     }
 
     public static void main(String[] args) {
