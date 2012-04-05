@@ -215,7 +215,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
                 }
 
-                if (! _programaticCheckingUnderway) {
+                if (!_programaticCheckingUnderway) {
                     checkedApplicationChanged(checkedApplicationList);
                 }
             }
