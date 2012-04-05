@@ -118,6 +118,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         DefaultTreeSelectionModel treeSelectionModel = new DefaultTreeSelectionModel();
         treeSelectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         checkBoxTree.setSelectionModel(treeSelectionModel);
+        checkBoxTree.getCheckBoxTreeSelectionModel().setSingleEventMode(true);
 
         checkBoxTree.setDigIn(true); // If a category is clicked, all its applications are also checked
         checkBoxTree.setClickInCheckBoxOnly(true); // Allow selection of items whithout setting them at the same time
@@ -173,51 +174,54 @@ public class ApplicationListSelectionPanel extends JPanel {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
 
-                List<String> checkedApplicationList = new ArrayList<String>();
+                if (_programaticCheckingUnderway) {
+                    _logger.trace("Skipping programatically checked applications.");
+                    return;
+                }
 
                 // Get the currently checked paths list
                 TreePath[] checkedPaths = tree.getCheckBoxTreeSelectionModel().getSelectionPaths();
-                if (checkedPaths != null) {
+                if (checkedPaths == null) {
+                    _logger.debug("Discovered that NOTHING is checked - ignoring event.");
+                    return;
+                }
 
-                    // For each checked box
-                    for (TreePath checkedPath : checkedPaths) {
+                // Retrieve application names for each checked box
+                List<String> checkedApplicationList = new ArrayList<String>();
+                for (TreePath checkedPath : checkedPaths) {
 
-                        final Object checkedBox = checkedPath.getLastPathComponent();
-                        final String checkedBoxName = checkedBox.toString();
-                        _logger.debug("Discovered that '" + checkedBoxName + "' is checked.");
+                    final Object checkedBox = checkedPath.getLastPathComponent();
+                    final String checkedBoxName = checkedBox.toString();
+                    _logger.debug("Discovered that '" + checkedBoxName + "' is checked.");
 
-                        // If the current checked box is not a leaf
-                        DefaultTreeModel treeModel = new DefaultTreeModel(_treeDataModel);
-                        if (!treeModel.isLeaf(checkedBox)) {
+                    // If the current checked box is a leaf
+                    DefaultTreeModel treeModel = new DefaultTreeModel(_treeDataModel);
+                    if (treeModel.isLeaf(checkedBox)) {
+                        // Simply add it to the list
+                        checkedApplicationList.add(checkedBoxName);
+                        continue;
+                    }
 
-                            _logger.trace("But '" + checkedBoxName + "' is NOT a LEAF - Going deeper :");
+                    _logger.trace("But '" + checkedBoxName + "' is NOT a LEAF - Going deeper :");
 
-                            // Get all the applications in the current 'directory' node
-                            for (Category category : Category.values()) {
+                    // Get all the applications in the current 'directory' node
+                    for (Category category : Category.values()) {
 
-                                // List category applications (or all applications if ROOT node)
-                                if ((checkedBoxName.equals(ROOT_NODE_NAME)) || (checkedBoxName.equals(category.value()))) {
+                        // List category applications (or all applications if ROOT node)
+                        if ((checkedBoxName.equals(ROOT_NODE_NAME)) || (checkedBoxName.equals(category.value()))) {
 
-                                    // Retrieve all the current category visible applications
-                                    for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(category)) {
+                            // Retrieve all the current category visible applications
+                            for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(category)) {
 
-                                        _logger.trace("\t- made of visible application = " + applicationName);
-                                        checkedApplicationList.add(applicationName);
-                                    }
-                                }
+                                _logger.trace("\t- made of visible application = " + applicationName);
+                                checkedApplicationList.add(applicationName);
                             }
-                        } else {
-                            checkedApplicationList.add(checkedBoxName);
                         }
                     }
-                } else {
-                    _logger.debug("Discovered that NOTHING is checked.");
-
                 }
 
-                if (!_programaticCheckingUnderway) {
-                    checkedApplicationChanged(checkedApplicationList);
-                }
+                _logger.debug("Notifying manually checked applications : {}" + checkedApplicationList);
+                checkedApplicationChanged(checkedApplicationList);
             }
         });
     }
@@ -245,6 +249,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                 if (icon != null) {
                     setIcon(icon);
                 }
+
                 _logger.trace("Rendered '" + applicationName + "' application icon.");
             }
 
@@ -367,7 +372,7 @@ public class ApplicationListSelectionPanel extends JPanel {
     }
 
     /** @applicationNames the list of application names to select, or null for all. */
-    public final void setCheckedApplicationNames(List<String> applicationNames) {
+    public final synchronized void setCheckedApplicationNames(List<String> applicationNames) {
 
         _programaticCheckingUnderway = true;
 
@@ -411,6 +416,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         List<String> specificApplicationNames = new ArrayList<String>();
         specificApplicationNames.add("Aspro2");
         specificApplicationNames.add("SearchCal");
+        specificApplicationNames.add("LITpro");
         specificApplicationNames.add("topcat");
         applicationListSelectionPanel.setCheckedApplicationNames(specificApplicationNames);
     }
