@@ -5,6 +5,7 @@ package fr.jmmc.smprsc.data.list;
 
 import com.jidesoft.swing.CheckBoxTree;
 import com.jidesoft.swing.CheckBoxTreeSelectionModel;
+import fr.jmmc.jmcs.gui.PreferencesView;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.smprsc.StubRegistry;
@@ -36,7 +37,7 @@ public class ApplicationListSelectionPanel extends JPanel {
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationListSelectionPanel.class.getName());
     // CONSTANTS
-    private static final int PANEL_HEIGHT = 400;
+    private static final int PANEL_HEIGHT = PreferencesView.FRAME_HEIGHT;
     // Cached application data
     private final HashMap<String, ImageIcon> _cachedApplicationIcons = new HashMap<String, ImageIcon>();
     private final HashMap<String, String> _cachedApplicationDescriptions = new HashMap<String, String>();
@@ -49,7 +50,7 @@ public class ApplicationListSelectionPanel extends JPanel {
     private final CheckBoxTree _checkBoxTree;
     private static final int ICON_SIZE = 16;
     // Description stuff
-    private static final int EDITOR_PANE_WIDTH = 400;
+    private static final int EDITOR_PANE_WIDTH = PreferencesView.FRAME_WIDTH - TREE_WIDTH;
     private final JEditorPane _descriptionEditorPane;
     private final JScrollPane _descriptionScrollPane;
 
@@ -63,11 +64,11 @@ public class ApplicationListSelectionPanel extends JPanel {
         // @TODO : Find why the tri-state checkboxes do not work !
 
         _descriptionEditorPane = setupDescriptionEditorPane();
-        _descriptionScrollPane = setupDescriptionScroolPane();
+        _descriptionScrollPane = setupDescriptionScrollPane();
 
         setLayout(new BorderLayout());
         add(new JScrollPane(_checkBoxTree), BorderLayout.WEST);
-        add(_descriptionEditorPane, BorderLayout.CENTER);
+        add(_descriptionScrollPane, BorderLayout.CENTER);
     }
 
     private DefaultMutableTreeNode populateTreeDataModel() {
@@ -107,7 +108,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
             @Override
             public Dimension getPreferredScrollableViewportSize() {
-                return new Dimension(TREE_WIDTH, HEIGHT);
+                return new Dimension(TREE_WIDTH, PANEL_HEIGHT);
             }
         };
 
@@ -269,30 +270,18 @@ public class ApplicationListSelectionPanel extends JPanel {
         return descriptionEditorPane;
     }
 
-    private JScrollPane setupDescriptionScroolPane() {
+    private JScrollPane setupDescriptionScrollPane() {
 
-        JScrollPane descriptionScrollPane = new JScrollPane();
-
-        descriptionScrollPane.add(_descriptionEditorPane);
-        final int minimumEditorPaneWidth = _descriptionEditorPane.getMinimumSize().width;
-        final int minimumEditorPaneHeight = _descriptionEditorPane.getMinimumSize().height;
-
-        // Try not to display windows bigger than screen for huge messages
-        // 40px margins are here to avoid some scrollbars...
-        final int maximumScrollPaneWidth = Math.min(minimumEditorPaneWidth + 50, 500);
-        final int maximumScrollPaneHeight = Math.min(minimumEditorPaneHeight + 50, 100);
-        final Dimension maximumScrollPaneDimension = new Dimension(maximumScrollPaneWidth, maximumScrollPaneHeight);
-        descriptionScrollPane.setMaximumSize(maximumScrollPaneDimension);
-        descriptionScrollPane.setPreferredSize(maximumScrollPaneDimension);
+        JScrollPane descriptionScrollPane = new JScrollPane(_descriptionEditorPane);
+        final Dimension scrollPaneDimension = new Dimension(EDITOR_PANE_WIDTH, PANEL_HEIGHT);
+        descriptionScrollPane.setMaximumSize(scrollPaneDimension);
+        descriptionScrollPane.setPreferredSize(scrollPaneDimension);
 
         // Ensure background color consistency
-        boolean editorPaneBackgroundShouldBeOpaque = (minimumEditorPaneWidth > maximumScrollPaneWidth) || (minimumEditorPaneHeight > maximumScrollPaneHeight);
-        _descriptionEditorPane.setOpaque(editorPaneBackgroundShouldBeOpaque);
-        descriptionScrollPane.setOpaque(editorPaneBackgroundShouldBeOpaque);
-        descriptionScrollPane.getViewport().setOpaque(editorPaneBackgroundShouldBeOpaque);
-        if (!editorPaneBackgroundShouldBeOpaque) {
-            descriptionScrollPane.setBorder(null);
-        }
+        _descriptionEditorPane.setOpaque(false);
+        descriptionScrollPane.setOpaque(false);
+        descriptionScrollPane.getViewport().setOpaque(false);
+        descriptionScrollPane.setBorder(null);
 
         return descriptionScrollPane;
     }
@@ -312,7 +301,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
             // Load application's SAMP meta data from JAR
             String applicationMetaDataResourcePath = StubRegistry.getApplicationResourcePath(applicationName);
-            _logger.trace("Loading '" + applicationName + "' meta data from path '" + applicationMetaDataResourcePath + "':");
+            _logger.trace("Loading '" + applicationName + "' meta data from path '" + applicationMetaDataResourcePath + "' :");
             SampStub applicationData = SampApplicationMetaData.loadSampSubFromResourcePath(applicationMetaDataResourcePath);
             HashMap<String, String> metaDataMap = new HashMap<String, String>();
             for (Metadata applicationMetaData : applicationData.getMetadatas()) {
@@ -323,7 +312,7 @@ public class ApplicationListSelectionPanel extends JPanel {
             }
 
             // HTML generation
-            _logger.debug("Generating HTML for '" + applicationName + "' aplication:");
+            _logger.debug("Generating HTML for '" + applicationName + "' application :");
             final StringBuilder generatedHtml = new StringBuilder(4096);
             generatedHtml.append("<HTML><HEAD></HEAD><BODY>");
             for (SampMetaData metaData : SampMetaData.values()) {
@@ -342,7 +331,6 @@ public class ApplicationListSelectionPanel extends JPanel {
                 }
                 _logger.trace("\t- found meta data for '" + label + "' : '" + value + "'.");
             }
-
             generatedHtml.append("</BODY></HTML>");
 
             // Cache application description for later use
