@@ -13,8 +13,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -45,10 +46,12 @@ public class StubRegistry {
     public static final String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
+    /** Known application names list */
+    private static List<String> _knownApplicationNames;
     /** Category's application names cache */
-    private static HashMap<Category, List<String>> _categoryApplicationNames;
+    private static Map<Category, List<String>> _categoryApplicationNames;
     /** Category's visible application names cache */
-    private static HashMap<Category, List<String>> _categoryVisibleApplicationNames;
+    private static Map<Category, List<String>> _categoryVisibleApplicationNames;
 
     /**
      * Private constructor that must be empty.
@@ -61,23 +64,32 @@ public class StubRegistry {
         final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + SAMP_STUB_LIST_FILENAME);
         final SampStubList sampStubList = loadData(fileURL);
 
+        // Members creation
+        _knownApplicationNames = new ArrayList<String>();
+        _categoryApplicationNames = new EnumMap<Category, List<String>>(Category.class);
+        _categoryVisibleApplicationNames = new EnumMap<Category, List<String>>(Category.class);
+
         // Cache all application names for each category
-        _categoryApplicationNames = new HashMap<Category, List<String>>();
-        _categoryVisibleApplicationNames = new HashMap<Category, List<String>>();
         for (Family family : sampStubList.getFamilies()) {
 
-            final List<String> applicationList = family.getApplications();
-            _categoryApplicationNames.put(family.getCategory(), applicationList);
+            // Get the list of application name for the current category
+            final Category currentCategory = family.getCategory();
+            final List<String> fullCategoryApplicationNameList = family.getApplications();
+            _categoryApplicationNames.put(currentCategory, fullCategoryApplicationNameList);
 
-            // Build the list of visible application for the current category
+            // Build the list of visible applications for the current category
             List<String> visibleCategoryApplications = new ArrayList<String>();
-            for (String applicationName : applicationList) {
+            for (String applicationName : fullCategoryApplicationNameList) {
+
+                _knownApplicationNames.add(applicationName);
+
                 if (getEmbeddedApplicationIcon(applicationName) != null) {
                     visibleCategoryApplications.add(applicationName);
                 }
             }
-            if (!visibleCategoryApplications.isEmpty()) {
-                _categoryVisibleApplicationNames.put(family.getCategory(), visibleCategoryApplications);
+
+            if (visibleCategoryApplications.size() > 0) {
+                _categoryVisibleApplicationNames.put(currentCategory, visibleCategoryApplications);
             }
         }
     }
@@ -96,6 +108,14 @@ public class StubRegistry {
         }
 
         return _singleton;
+    }
+
+    /**
+     * @return true if the given application name is known, false otherwise
+     */
+    public static boolean isApplicationKnown(String applicationName) {
+        getInstance();
+        return _knownApplicationNames.contains(applicationName);
     }
 
     /**
@@ -195,6 +215,13 @@ public class StubRegistry {
 
             System.out.println("");
         }
+
+        System.out.println("-------------------------------------------------------");
+        String[] applicationNames = {"SearchCal", "Aladin", "toto"};
+        for (String string : applicationNames) {
+            System.out.println("Application '" + string + "' is" + (isApplicationKnown(string) ? " " : " NOT ") + "known.");
+        }
+        System.out.println("-------------------------------------------------------");
     }
 }
 /*___oOo___*/
