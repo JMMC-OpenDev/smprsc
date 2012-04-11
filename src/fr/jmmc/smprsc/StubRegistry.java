@@ -122,7 +122,7 @@ public class StubRegistry {
     /**
      * @return the complete resource path of the given application.
      */
-    public static String getApplicationResourcePath(final String applicationName) {
+    public static String forgeApplicationResourcePath(final String applicationName) {
         return SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_DATA_FILE_EXTENSION;
     }
 
@@ -146,7 +146,8 @@ public class StubRegistry {
 
         // Forge each application description file resource path
         for (String applicationName : _categoryApplicationNames.get(category)) {
-            applicationPathList.add(getApplicationResourcePath(applicationName));
+            final String forgedApplicationResourcePath = forgeApplicationResourcePath(applicationName);
+            applicationPathList.add(forgedApplicationResourcePath);
         }
 
         return applicationPathList;
