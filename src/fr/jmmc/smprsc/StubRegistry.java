@@ -115,7 +115,8 @@ public class StubRegistry {
      */
     public static boolean isApplicationKnown(String applicationName) {
         getInstance();
-        return _knownApplicationNames.contains(applicationName);
+        final boolean isApplicationKnown = _knownApplicationNames.contains(applicationName);
+        return isApplicationKnown;
     }
 
     /**
