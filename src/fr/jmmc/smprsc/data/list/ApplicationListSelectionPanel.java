@@ -300,9 +300,11 @@ public class ApplicationListSelectionPanel extends JPanel {
         if (applicationDescription == null) {
 
             // Load application's SAMP meta data from JAR
-            String applicationMetaDataResourcePath = StubRegistry.getApplicationResourcePath(applicationName);
+            String applicationMetaDataResourcePath = StubRegistry.forgeApplicationResourcePath(applicationName);
+
             _logger.trace("Loading '" + applicationName + "' meta data from path '" + applicationMetaDataResourcePath + "' :");
             SampStub applicationData = SampApplicationMetaData.loadSampSubFromResourcePath(applicationMetaDataResourcePath);
+
             HashMap<String, String> metaDataMap = new HashMap<String, String>();
             for (Metadata applicationMetaData : applicationData.getMetadatas()) {
                 final String metaDataKey = applicationMetaData.getKey();
