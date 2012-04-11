@@ -33,7 +33,7 @@ public class StubRegistry {
     /** Logger - get from given class name */
     private static final Logger _logger = LoggerFactory.getLogger(StubRegistry.class.getName());
     /** Internal singleton instance holder */
-    private static StubRegistry _singleton = null;
+    private static StubRegistry _singleton = new StubRegistry();
     /** package name for JAXB generated code */
     private final static String SAMP_STUB_LIST_JAXB_PACKAGE = "fr.jmmc.smprsc.data.list.model";
     /** SAMP stub list file name */
@@ -47,14 +47,14 @@ public class StubRegistry {
     /** internal JAXB Factory */
     private final JAXBFactory jf;
     /** Known application names list */
-    private static List<String> _knownApplicationNames;
+    private List<String> _knownApplicationNames;
     /** Category's application names cache */
-    private static Map<Category, List<String>> _categoryApplicationNames;
+    private Map<Category, List<String>> _categoryApplicationNames;
     /** Category's visible application names cache */
-    private static Map<Category, List<String>> _categoryVisibleApplicationNames;
+    private Map<Category, List<String>> _categoryVisibleApplicationNames;
 
     /**
-     * Private constructor that must be empty.
+     * Private constructor called at static initialization.
      */
     private StubRegistry() {
         // Start JAXB
@@ -94,63 +94,40 @@ public class StubRegistry {
         }
     }
 
-    /**
-     * Return the singleton instance of StubRegistry.
-     *
-     * @return the singleton preference instance
-     */
-    private static StubRegistry getInstance() {
-        // Build new reference if singleton does not already exist or return previous reference
-        if (_singleton == null) {
-            _logger.debug("StubRegistry.getInstance()");
+    /** Invoke JAXB to load XML file */
+    private SampStubList loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
 
-            _singleton = new StubRegistry();
+        // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
+        try {
+            final Unmarshaller u = jf.createUnMarshaller();
+            return (SampStubList) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
+        } catch (JAXBException je) {
+            throw new IllegalArgumentException("Load failure on " + dataModelURL, je);
         }
-
-        return _singleton;
     }
 
     /**
      * @return true if the given application name is known, false otherwise
      */
     public static boolean isApplicationKnown(String applicationName) {
-        getInstance();
-        final boolean isApplicationKnown = _knownApplicationNames.contains(applicationName);
+        final boolean isApplicationKnown = _singleton._knownApplicationNames.contains(applicationName);
         return isApplicationKnown;
     }
 
     /**
-     * @return the complete resource path of the given application.
+     * @return the list of SAMP stub application names for the given category, null otherwise.
      */
-    public static String forgeApplicationResourcePath(final String applicationName) {
-        return SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_DATA_FILE_EXTENSION;
+    public static List<String> getCategoryApplicationNames(Category category) {
+        return _singleton._categoryApplicationNames.get(category);
     }
 
     /**
      * @return the list of SAMP stub visible application names for the given category, null otherwise.
      */
     public static List<String> getCategoryVisibleApplicationNames(Category category) {
-        getInstance();
-        return _categoryVisibleApplicationNames.get(category);
-    }
-
-    /**
-     * @return the list of SAMP stub application resource paths for the given category.
-     */
-    public static List<String> getCategoryApplicationResourcePaths(Category category) {
-
-        getInstance();
-
-        // Get category's application names
-        final List<String> applicationPathList = new ArrayList<String>();
-
-        // Forge each application description file resource path
-        for (String applicationName : _categoryApplicationNames.get(category)) {
-            final String forgedApplicationResourcePath = forgeApplicationResourcePath(applicationName);
-            applicationPathList.add(forgedApplicationResourcePath);
-        }
-
-        return applicationPathList;
+        return _singleton._categoryVisibleApplicationNames.get(category);
     }
 
     /**
@@ -179,18 +156,11 @@ public class StubRegistry {
         return icon;
     }
 
-    /** Invoke JAXB to load XML file */
-    private SampStubList loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
-
-        // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
-        try {
-            final Unmarshaller u = jf.createUnMarshaller();
-            return (SampStubList) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
-        } catch (JAXBException je) {
-            throw new IllegalArgumentException("Load failure on " + dataModelURL, je);
-        }
+    /**
+     * @return the complete resource path of the given application.
+     */
+    public static String forgeApplicationResourcePath(final String applicationName) {
+        return SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_DATA_FILE_EXTENSION;
     }
 
     /**
@@ -212,7 +182,7 @@ public class StubRegistry {
             list = StubRegistry.getCategoryVisibleApplicationNames(category);
             System.out.println("Visible apps : " + CollectionUtils.toString(list, ", ", "{", "}"));
 
-            list = StubRegistry.getCategoryApplicationResourcePaths(category);
+            list = StubRegistry.getCategoryApplicationNames(category);
             System.out.println("Application paths : " + CollectionUtils.toString(list, ", ", "{", "}"));
 
             System.out.println("");
