@@ -17,6 +17,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,8 @@ public class ApplicationListSelectionPanel extends JPanel {
     // Cached application data
     private final HashMap<String, ImageIcon> _cachedApplicationIcons = new HashMap<String, ImageIcon>();
     private final HashMap<String, String> _cachedApplicationDescriptions = new HashMap<String, String>();
+    private final HashMap<String, Boolean> _cachedApplicationCheckBoxState = new HashMap<String, Boolean>();
+    private String _currentlySelectedApplicationName = null;
     private boolean _programaticCheckingUnderway = true;
     // Tree stuff
     private static final int TREE_WIDTH = 200;
@@ -53,6 +57,7 @@ public class ApplicationListSelectionPanel extends JPanel {
     private static final int EDITOR_PANE_WIDTH = PreferencesView.FRAME_WIDTH - TREE_WIDTH;
     private final JEditorPane _descriptionEditorPane;
     private final JScrollPane _descriptionScrollPane;
+    private final JCheckBox _betaCheckBox;
 
     public ApplicationListSelectionPanel() {
 
@@ -67,8 +72,37 @@ public class ApplicationListSelectionPanel extends JPanel {
         _descriptionScrollPane = setupDescriptionScrollPane();
 
         setLayout(new BorderLayout());
+
         add(new JScrollPane(_checkBoxTree), BorderLayout.WEST);
-        add(_descriptionScrollPane, BorderLayout.CENTER);
+
+        JPanel descriptionPanel = new JPanel();
+        descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.PAGE_AXIS));
+        _descriptionScrollPane.setAlignmentX(CENTER_ALIGNMENT);
+        descriptionPanel.add(_descriptionScrollPane);
+        _betaCheckBox = new JCheckBox("Use beta version");
+        _betaCheckBox.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final boolean betaCheckBoxIsSelected = _betaCheckBox.isSelected();
+                _logger.debug("Beta JNLP Checkbox has been '" + (betaCheckBoxIsSelected ? "" : "de") + "selected' for application '" + _currentlySelectedApplicationName + "', saving state.");
+                _cachedApplicationCheckBoxState.put(_currentlySelectedApplicationName, betaCheckBoxIsSelected);
+
+                // Get all desired beta applications
+                List<String> betaApplicationList = new ArrayList<String>();
+                for (String string : _cachedApplicationCheckBoxState.keySet()) {
+                    if (_cachedApplicationCheckBoxState.get(string) == true) {
+                        betaApplicationList.add(string);
+                    }
+                }
+                betaApplicationChanged(betaApplicationList);
+            }
+        });
+        _betaCheckBox.setEnabled(false);
+        _betaCheckBox.setAlignmentX(CENTER_ALIGNMENT);
+        descriptionPanel.add(_betaCheckBox);
+
+        add(descriptionPanel, BorderLayout.CENTER);
     }
 
     private DefaultMutableTreeNode populateTreeDataModel() {
@@ -81,7 +115,7 @@ public class ApplicationListSelectionPanel extends JPanel {
             final String categoryName = applicationCategory.value();
             DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryName);
             rootNode.add(categoryNode);
-            _logger.trace("Loading applications for category '" + categoryName + "':");
+            _logger.trace("Loading applications for category '{}' :", categoryName);
 
             // Gets all category's visible application names
             for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(applicationCategory)) {
@@ -95,7 +129,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                 // Create application node
                 DefaultMutableTreeNode applicationNode = new DefaultMutableTreeNode(applicationName);
                 categoryNode.add(applicationNode);
-                _logger.trace("\t- found application '" + applicationName + "' with icon.");
+                _logger.trace("\t- found application '{}' with icon.", applicationName);
             }
         }
 
@@ -137,6 +171,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
             @Override
             public void valueChanged(TreeSelectionEvent e) {
+                _currentlySelectedApplicationName = null; // Reset selection memory
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
                 // if nothing is selected
@@ -157,12 +192,12 @@ public class ApplicationListSelectionPanel extends JPanel {
                 } else { // i.e an application is selected
 
                     // Retrieve the selected application name
-                    String selectedApplicationName = node.getUserObject().toString();
+                    _currentlySelectedApplicationName = node.getUserObject().toString();
 
-                    _logger.debug("Application '" + selectedApplicationName + "' is selected.");
+                    _logger.debug("Application '{}' is selected.", _currentlySelectedApplicationName);
 
                     // Fill information pane accordinaly
-                    fillApplicationDescriptionPane(selectedApplicationName);
+                    fillApplicationDescriptionPane(_currentlySelectedApplicationName);
                 }
             }
         });
@@ -193,7 +228,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
                     final Object checkedBox = checkedPath.getLastPathComponent();
                     final String checkedBoxName = checkedBox.toString();
-                    _logger.debug("Discovered that '" + checkedBoxName + "' is checked.");
+                    _logger.debug("Discovered that '{}' is checked.", checkedBoxName);
 
                     // If the current checked box is a leaf
                     DefaultTreeModel treeModel = new DefaultTreeModel(_treeDataModel);
@@ -203,7 +238,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                         continue;
                     }
 
-                    _logger.trace("But '" + checkedBoxName + "' is NOT a LEAF - Going deeper :");
+                    _logger.trace("But '{}' is NOT a LEAF - Going deeper :", checkedBoxName);
 
                     // Get all the applications in the current 'directory' node
                     for (Category category : Category.values()) {
@@ -214,21 +249,17 @@ public class ApplicationListSelectionPanel extends JPanel {
                             // Retrieve all the current category visible applications
                             for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(category)) {
 
-                                _logger.trace("\t- made of visible application = " + applicationName);
+                                _logger.trace("\t- made of visible application = '{}'.", applicationName);
                                 checkedApplicationList.add(applicationName);
                             }
                         }
                     }
                 }
 
-                _logger.debug("Notifying manually checked applications : {}" + checkedApplicationList);
+                _logger.debug("Notifying manually checked applications : {}", checkedApplicationList);
                 checkedApplicationChanged(checkedApplicationList);
             }
         });
-    }
-
-    protected void checkedApplicationChanged(List<String> checkedApplicationList) {
-        System.out.println("Selected applications : " + CollectionUtils.toString(checkedApplicationList, ", ", "{", "}") + ".");
     }
 
     private class ApplicationIconRenderer extends DefaultTreeCellRenderer {
@@ -251,7 +282,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                     setIcon(icon);
                 }
 
-                _logger.trace("Rendered '" + applicationName + "' application icon.");
+                _logger.trace("Rendered '{}' application icon.", applicationName);
             }
 
             return this;
@@ -302,7 +333,7 @@ public class ApplicationListSelectionPanel extends JPanel {
             // Load application's SAMP meta data from JAR
             String applicationMetaDataResourcePath = StubRegistry.forgeApplicationResourcePath(applicationName);
 
-            _logger.trace("Loading '" + applicationName + "' meta data from path '" + applicationMetaDataResourcePath + "' :");
+            _logger.trace("Loading '{}' meta data from path '{}' :", applicationName, applicationMetaDataResourcePath);
             SampStub applicationData = SampApplicationMetaData.loadSampSubFromResourcePath(applicationMetaDataResourcePath);
 
             HashMap<String, String> metaDataMap = new HashMap<String, String>();
@@ -310,11 +341,11 @@ public class ApplicationListSelectionPanel extends JPanel {
                 final String metaDataKey = applicationMetaData.getKey();
                 final String metaDataValue = applicationMetaData.getValue();
                 metaDataMap.put(metaDataKey, metaDataValue);
-                _logger.trace("\t- found meta data ['" + metaDataKey + "' -> '" + metaDataValue + "'].");
+                _logger.trace("\t- found meta data ['{}' -> '{}'].", metaDataKey, metaDataValue);
             }
 
             // HTML generation
-            _logger.debug("Generating HTML for '" + applicationName + "' application :");
+            _logger.debug("Generating HTML for '{}' application :", applicationName);
             final StringBuilder generatedHtml = new StringBuilder(4096);
             generatedHtml.append("<HTML><HEAD></HEAD><BODY>");
             for (SampMetaData metaData : SampMetaData.values()) {
@@ -331,15 +362,23 @@ public class ApplicationListSelectionPanel extends JPanel {
                     generatedHtml.append("<B>").append(label).append(":</B> ");
                     generatedHtml.append(value).append("<BR/><BR/>");
                 }
-                _logger.trace("\t- found meta data for '" + label + "' : '" + value + "'.");
+                _logger.trace("\t- found meta data for '{}' = '{}'.", label, value);
             }
             generatedHtml.append("</BODY></HTML>");
+
+            // Retrieve and cache wether the current application has a beta JNLP URL or not
+            final String betaJnlpUrl = metaDataMap.get(SampMetaData.JNLP_BETA_URL.id());
+            if (betaJnlpUrl != null) {
+                final boolean betaIsEnabled = isApplicationBetaJnlpUrlInUse(applicationName);
+                _cachedApplicationCheckBoxState.put(applicationName, betaIsEnabled);
+                _logger.trace("\t- found beta JNLP URL, retrieveing saved checkbox state.");
+            }
 
             // Cache application description for later use
             applicationDescription = generatedHtml.toString();
             _cachedApplicationDescriptions.put(applicationName, applicationDescription);
         } else {
-            _logger.debug("Retrieved cached '" + applicationName + "' application description.");
+            _logger.debug("Retrieved cached '{}' application description.", applicationName);
         }
 
         // Set application description in editor pane
@@ -347,18 +386,21 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         // Show first line of editor pane, and not its last line as by default !
         _descriptionEditorPane.setCaretPosition(0);
+
+        Boolean checkBoxState = _cachedApplicationCheckBoxState.get(applicationName);
+        if (checkBoxState == null) {
+            _betaCheckBox.setEnabled(false);
+            _betaCheckBox.setSelected(false);
+            _logger.debug("No beta JLNP URL found for '{}', disabled beta checkbox.", applicationName);
+        } else {
+            _betaCheckBox.setEnabled(true);
+            _betaCheckBox.setSelected(checkBoxState);
+            _logger.debug("Found beta JLNP URL for '{}', enabled beta checkbox to saved state of '{}'.", applicationName, checkBoxState);
+        }
     }
 
-    /** @return the list of application names selected by the user */
-    public final List<String> getCheckedApplicationNames() {
-        List<String> selectedApplicationNames = new ArrayList<String>();
-
-        for (TreePath selectedPath : _checkBoxTree.getCheckBoxTreeSelectionModel().getSelectionPaths()) {
-            final String applicationName = selectedPath.getLastPathComponent().toString();
-            selectedApplicationNames.add(applicationName);
-        }
-
-        return selectedApplicationNames;
+    protected void checkedApplicationChanged(List<String> checkedApplicationList) {
+        System.out.println("Selected applications : " + CollectionUtils.toString(checkedApplicationList, ", ", "{", "}") + ".");
     }
 
     /** @applicationNames the list of application names to select, or null for all. */
@@ -380,14 +422,22 @@ public class ApplicationListSelectionPanel extends JPanel {
             final String currentRowApplicationName = pathForCurrentRow.getLastPathComponent().toString();
             if ((applicationNames == null) || (applicationNames.contains(currentRowApplicationName))) {
                 checkBoxTreeSelectionModel.addSelectionPath(pathForCurrentRow);
-                _logger.debug("Checked '" + currentRowApplicationName + "' application.");
+                _logger.debug("Checked '{}' application.", currentRowApplicationName);
             } else {
                 checkBoxTreeSelectionModel.removeSelectionPath(pathForCurrentRow);
-                _logger.trace("Unchecked '" + currentRowApplicationName + "' application.");
+                _logger.trace("Unchecked '{}' application.", currentRowApplicationName);
             }
         }
 
         _programaticCheckingUnderway = false;
+    }
+
+    protected void betaApplicationChanged(List<String> betaApplicationList) {
+        System.out.println("Beta applications : " + CollectionUtils.toString(betaApplicationList, ", ", "{", "}") + ".");
+    }
+
+    protected boolean isApplicationBetaJnlpUrlInUse(String applicationName) {
+        return false;
     }
 
     public static void main(String[] args) {
@@ -398,7 +448,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         frame.setVisible(true);
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (InterruptedException ex) {
             _logger.error("", ex);
         }
