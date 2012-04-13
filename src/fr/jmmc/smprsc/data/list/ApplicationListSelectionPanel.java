@@ -48,21 +48,23 @@ public class ApplicationListSelectionPanel extends JPanel {
     private boolean _programaticCheckingUnderway = true;
     // Tree stuff
     private static final int TREE_WIDTH = 200;
-    private final DefaultMutableTreeNode _treeDataModel;
+    private DefaultMutableTreeNode _treeDataModel;
     private static final List<String> ALL = null;
     private static final String ROOT_NODE_NAME = "Root";
-    private final CheckBoxTree _checkBoxTree;
+    private CheckBoxTree _checkBoxTree;
     private static final int ICON_SIZE = 16;
     // Description stuff
     private static final int EDITOR_PANE_WIDTH = PreferencesView.FRAME_WIDTH - TREE_WIDTH;
-    private final JEditorPane _descriptionEditorPane;
-    private final JScrollPane _descriptionScrollPane;
-    private final JCheckBox _betaCheckBox;
+    private JEditorPane _descriptionEditorPane;
+    private JScrollPane _descriptionScrollPane;
+    private JCheckBox _betaCheckBox;
 
     public ApplicationListSelectionPanel() {
 
         super();
+    }
 
+    protected void init() {
         setLayout(new BorderLayout());
 
         // Setup tree pane
@@ -107,6 +109,10 @@ public class ApplicationListSelectionPanel extends JPanel {
                 DefaultMutableTreeNode applicationNode = new DefaultMutableTreeNode(applicationName);
                 categoryNode.add(applicationNode);
                 _logger.trace("\t- found application '{}' with icon.", applicationName);
+
+                // Retrieve beta JNLP check box state
+                final boolean applicationBetaJnlpUrlInUse = isApplicationBetaJnlpUrlInUse(applicationName);
+                _cachedBetaCheckBoxStates.put(applicationName, applicationBetaJnlpUrlInUse);
             }
         }
 
