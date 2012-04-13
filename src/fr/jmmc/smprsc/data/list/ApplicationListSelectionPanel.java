@@ -43,7 +43,7 @@ public class ApplicationListSelectionPanel extends JPanel {
     // Cached application data
     private final HashMap<String, ImageIcon> _cachedApplicationIcons = new HashMap<String, ImageIcon>();
     private final HashMap<String, String> _cachedApplicationDescriptions = new HashMap<String, String>();
-    private final HashMap<String, Boolean> _cachedApplicationCheckBoxState = new HashMap<String, Boolean>();
+    private final HashMap<String, Boolean> _cachedBetaCheckBoxStates = new HashMap<String, Boolean>();
     private String _currentlySelectedApplicationName = null;
     private boolean _programaticCheckingUnderway = true;
     // Tree stuff
@@ -63,45 +63,22 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         super();
 
+        setLayout(new BorderLayout());
+
+        // Setup tree pane
         _treeDataModel = populateTreeDataModel();
         _checkBoxTree = setupCheckBoxTree();
         setCheckedApplicationNames(ALL);
-        // @TODO : Find why the tri-state checkboxes do not work !
-
-        _descriptionEditorPane = setupDescriptionEditorPane();
-        _descriptionScrollPane = setupDescriptionScrollPane();
-
-        setLayout(new BorderLayout());
-
         add(new JScrollPane(_checkBoxTree), BorderLayout.WEST);
 
+        // Setup description pane
+        _descriptionEditorPane = setupDescriptionEditorPane();
+        _descriptionScrollPane = setupDescriptionScrollPane();
+        _betaCheckBox = setupBetaCheckBox();
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.PAGE_AXIS));
-        _descriptionScrollPane.setAlignmentX(CENTER_ALIGNMENT);
         descriptionPanel.add(_descriptionScrollPane);
-        _betaCheckBox = new JCheckBox("Use beta version");
-        _betaCheckBox.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final boolean betaCheckBoxIsSelected = _betaCheckBox.isSelected();
-                _logger.debug("Beta JNLP Checkbox has been '" + (betaCheckBoxIsSelected ? "" : "de") + "selected' for application '" + _currentlySelectedApplicationName + "', saving state.");
-                _cachedApplicationCheckBoxState.put(_currentlySelectedApplicationName, betaCheckBoxIsSelected);
-
-                // Get all desired beta applications
-                List<String> betaApplicationList = new ArrayList<String>();
-                for (String string : _cachedApplicationCheckBoxState.keySet()) {
-                    if (_cachedApplicationCheckBoxState.get(string) == true) {
-                        betaApplicationList.add(string);
-                    }
-                }
-                betaApplicationChanged(betaApplicationList);
-            }
-        });
-        _betaCheckBox.setEnabled(false);
-        _betaCheckBox.setAlignmentX(CENTER_ALIGNMENT);
         descriptionPanel.add(_betaCheckBox);
-
         add(descriptionPanel, BorderLayout.CENTER);
     }
 
@@ -307,6 +284,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         final Dimension scrollPaneDimension = new Dimension(EDITOR_PANE_WIDTH, PANEL_HEIGHT);
         descriptionScrollPane.setMaximumSize(scrollPaneDimension);
         descriptionScrollPane.setPreferredSize(scrollPaneDimension);
+        descriptionScrollPane.setAlignmentX(CENTER_ALIGNMENT);
 
         // Ensure background color consistency
         _descriptionEditorPane.setOpaque(false);
@@ -315,6 +293,35 @@ public class ApplicationListSelectionPanel extends JPanel {
         descriptionScrollPane.setBorder(null);
 
         return descriptionScrollPane;
+    }
+
+    private JCheckBox setupBetaCheckBox() {
+
+        final JCheckBox betaCheckBox = new JCheckBox("Use beta version");
+
+        betaCheckBox.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final boolean betaCheckBoxIsSelected = betaCheckBox.isSelected();
+                _logger.debug("Beta JNLP Checkbox has been '" + (betaCheckBoxIsSelected ? "" : "de") + "selected' for application '" + _currentlySelectedApplicationName + "', saving state.");
+                _cachedBetaCheckBoxStates.put(_currentlySelectedApplicationName, betaCheckBoxIsSelected);
+
+                // Get all desired beta applications
+                List<String> betaApplicationList = new ArrayList<String>();
+                for (String string : _cachedBetaCheckBoxStates.keySet()) {
+                    if (_cachedBetaCheckBoxStates.get(string) == true) {
+                        betaApplicationList.add(string);
+                    }
+                }
+                betaApplicationChanged(betaApplicationList);
+            }
+        });
+
+        betaCheckBox.setEnabled(false);
+        betaCheckBox.setAlignmentX(CENTER_ALIGNMENT);
+
+        return betaCheckBox;
     }
 
     private void fillApplicationDescriptionPane(String applicationName) {
@@ -370,7 +377,7 @@ public class ApplicationListSelectionPanel extends JPanel {
             final String betaJnlpUrl = metaDataMap.get(SampMetaData.JNLP_BETA_URL.id());
             if (betaJnlpUrl != null) {
                 final boolean betaIsEnabled = isApplicationBetaJnlpUrlInUse(applicationName);
-                _cachedApplicationCheckBoxState.put(applicationName, betaIsEnabled);
+                _cachedBetaCheckBoxStates.put(applicationName, betaIsEnabled);
                 _logger.trace("\t- found beta JNLP URL, retrieveing saved checkbox state.");
             }
 
@@ -387,7 +394,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         // Show first line of editor pane, and not its last line as by default !
         _descriptionEditorPane.setCaretPosition(0);
 
-        Boolean checkBoxState = _cachedApplicationCheckBoxState.get(applicationName);
+        Boolean checkBoxState = _cachedBetaCheckBoxStates.get(applicationName);
         if (checkBoxState == null) {
             _betaCheckBox.setEnabled(false);
             _betaCheckBox.setSelected(false);
@@ -399,11 +406,18 @@ public class ApplicationListSelectionPanel extends JPanel {
         }
     }
 
+    /**
+     * Called each time the selection of applications changed.
+     * Should be override to save selected application list.
+     */
     protected void checkedApplicationChanged(List<String> checkedApplicationList) {
         System.out.println("Selected applications : " + CollectionUtils.toString(checkedApplicationList, ", ", "{", "}") + ".");
     }
 
-    /** @applicationNames the list of application names to select, or null for all. */
+    /**
+     * Define the current application selection.
+     * @param applicationNames the list of application names to select, or null for all.
+     */
     public final synchronized void setCheckedApplicationNames(List<String> applicationNames) {
 
         _programaticCheckingUnderway = true;
@@ -432,12 +446,23 @@ public class ApplicationListSelectionPanel extends JPanel {
         _programaticCheckingUnderway = false;
     }
 
+    /**
+     * Called each time the beta state of any application changed.
+     * Should be override to save beta application list.
+     */
     protected void betaApplicationChanged(List<String> betaApplicationList) {
         System.out.println("Beta applications : " + CollectionUtils.toString(betaApplicationList, ", ", "{", "}") + ".");
     }
 
+    /**
+     * Called each time any application is selected, to retrieve whether it has a beta release or not.
+     * By default force use of production JNLP URL.
+     * 
+     * Should be override to return beta application status.
+     * @return true if the given application has a beta JNLP URL, false otherwise.
+     */
     protected boolean isApplicationBetaJnlpUrlInUse(String applicationName) {
-        return false;
+        return false; // By default use production JNLP URL.
     }
 
     public static void main(String[] args) {
