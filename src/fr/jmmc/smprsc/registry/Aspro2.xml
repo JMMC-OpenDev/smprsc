@@ -13,6 +13,10 @@
         <value>http://apps.jmmc.fr/~swmgr/Aspro2/Aspro2.jnlp</value>
     </metadata>
     <metadata>
+        <key>x-samp.jnlp.beta.url</key>
+        <value>http://apps.jmmc.fr/~betaswmgr/Aspro2/Aspro2.jnlp</value>
+    </metadata>
+    <metadata>
         <key>samp.description.text</key>
         <value>Prepare your interferometric observations with the VLTI or other interferometers</value>
     </metadata>

@@ -13,6 +13,10 @@
         <value>http://jmmc.fr/~swmgr/LITpro/LITpro.jnlp</value>
     </metadata>
     <metadata>
+        <key>x-samp.jnlp.beta.url</key>
+        <value>http://apps.jmmc.fr/~betaswmgr/LITpro/LITpro.jnlp</value>
+    </metadata>
+    <metadata>
         <key>affiliation.feedback</key>
         <value>http://jmmc.fr/feedback/</value>
     </metadata>

@@ -21,6 +21,10 @@
         <value>http://apps.jmmc.fr/~sclws/SearchCal/SearchCal.jnlp</value>
     </metadata>
     <metadata>
+        <key>x-samp.jnlp.beta.url</key>
+        <value>http://apps.jmmc.fr/~lafrasse/SearchCal/SearchCal.jnlp</value>
+    </metadata>
+    <metadata>
         <key>affiliation.name</key>
         <value>JMMC (Jean-Marie Mariotti Center)</value>
     </metadata>
