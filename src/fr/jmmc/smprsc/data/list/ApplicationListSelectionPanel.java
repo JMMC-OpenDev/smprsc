@@ -113,6 +113,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                 // Retrieve beta JNLP check box state
                 final boolean applicationBetaJnlpUrlInUse = isApplicationBetaJnlpUrlInUse(applicationName);
                 _cachedBetaCheckBoxStates.put(applicationName, applicationBetaJnlpUrlInUse);
+                // TODO : put null if no beta URL available.
             }
         }
 
@@ -347,7 +348,7 @@ public class ApplicationListSelectionPanel extends JPanel {
             String applicationMetaDataResourcePath = StubRegistry.forgeApplicationResourcePath(applicationName);
 
             _logger.trace("Loading '{}' meta data from path '{}' :", applicationName, applicationMetaDataResourcePath);
-            SampStub applicationData = SampApplicationMetaData.loadSampSubFromResourcePath(applicationMetaDataResourcePath);
+            SampStub applicationData = SampApplicationMetaData.loadSampStubFromResourcePath(applicationMetaDataResourcePath);
 
             HashMap<String, String> metaDataMap = new HashMap<String, String>();
             for (Metadata applicationMetaData : applicationData.getMetadatas()) {

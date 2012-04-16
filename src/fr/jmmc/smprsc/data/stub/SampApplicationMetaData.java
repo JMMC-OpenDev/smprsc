@@ -74,7 +74,7 @@ public class SampApplicationMetaData {
         _sampSubscriptions = subscriptions;
     }
 
-    public static SampStub loadSampSubFromResourcePath(final String path) {
+    public static SampStub loadSampStubFromResourcePath(final String path) {
         final URL resourceURL = FileUtils.getResource(path);
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         try {
