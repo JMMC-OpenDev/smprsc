@@ -44,8 +44,10 @@ public class StubMetaData {
     private final static String REGISTRY_BASE_URL = "http://jmmc.fr/~smprun/stubs/";
     /** JMMC SAMP application meta data repository submission form name */
     private final static String REGISTRY_SUBMISSION_FORM_NAME = "push.php";
+    /** JMMC SAMP application meta data repository directory containing all stubs definition files */
+    private static final String SAMP_STUB_REGISTRY_DIRECTORY = "registry/";
     /** Resource directory containing all SAMP application files */
-    private final static String SAMP_STUB_FILE_DIRECTORY = "fr/jmmc/smprsc/registry/";
+    private final static String SAMP_STUB_RESOURCE_DIRECTORY = "fr/jmmc/smprsc/registry/";
     /** File extension of the JMMC SAMP application meta data file format */
     private final static String SAMP_STUB_FILE_EXTENSION = ".xml";
     /** Application icon files extension */
@@ -107,7 +109,7 @@ public class StubMetaData {
 
         try {
             // Forge icon resource path
-            final String iconResourcePath = SAMP_STUB_FILE_DIRECTORY + applicationName + SAMP_STUB_ICON_FILE_EXTENSION;
+            final String iconResourcePath = SAMP_STUB_RESOURCE_DIRECTORY + applicationName + SAMP_STUB_ICON_FILE_EXTENSION;
 
             // Try to load application icon resource
             final URL fileURL = FileUtils.getResource(iconResourcePath);
@@ -172,7 +174,7 @@ public class StubMetaData {
         boolean unknownApplicationFlag = false; // In order to skip later application reporting if registry querying goes wrong
 
         try {
-            final String path = REGISTRY_BASE_URL + _applicationName + SAMP_STUB_FILE_EXTENSION;
+            final String path = REGISTRY_BASE_URL + SAMP_STUB_REGISTRY_DIRECTORY + _applicationName + SAMP_STUB_FILE_EXTENSION;
             final URI applicationDescriptionFileURI = Http.validateURL(path);
             final String result = Http.download(applicationDescriptionFileURI, false); // Use the multi-threaded HTTP client
             _logger.debug("HTTP response : '{}'.", result);
@@ -190,9 +192,14 @@ public class StubMetaData {
 
     private static SampStub loadSampStubForApplication(final String applicationName) {
 
-        final String path = computeResourcePathForApplication(applicationName);
-        final URL resourceURL = FileUtils.getResource(path);
+        if (applicationName == null) {
+            throw new IllegalArgumentException("applicationName");
+        }
+
+        final String path = SAMP_STUB_RESOURCE_DIRECTORY + applicationName + SAMP_STUB_FILE_EXTENSION;
+
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
+        final URL resourceURL = FileUtils.getResource(path);
         try {
             final Unmarshaller u = _jaxbFactory.createUnMarshaller();
             return (SampStub) u.unmarshal(new BufferedInputStream(resourceURL.openStream()));
@@ -201,13 +208,6 @@ public class StubMetaData {
         } catch (JAXBException je) {
             throw new IllegalArgumentException("Load failure on " + resourceURL, je);
         }
-    }
-
-    private static String computeResourcePathForApplication(String applicationName) {
-        if (applicationName == null) {
-            throw new IllegalArgumentException("applicationName");
-        }
-        return SAMP_STUB_FILE_DIRECTORY + applicationName + SAMP_STUB_FILE_EXTENSION;
     }
 
     /**
