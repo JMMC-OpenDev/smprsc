@@ -40,8 +40,10 @@ public class StubMetaData {
     // Constants
     /** Package name for JAXB generated code */
     private final static String STUB_DATA_MODEL_JAXB_PATH = "fr.jmmc.smprsc.data.stub.model";
-    /** URL of the JMMC SAMP application meta data repository submission form */
-    private final static String REGISTRY_SUBMISSION_FORM_URL = "http://jmmc.fr/~smprun/stubs/push.php";
+    /** Base URL of the JMMC SAMP application meta data repository */
+    private final static String REGISTRY_BASE_URL = "http://jmmc.fr/~smprun/stubs/";
+    /** JMMC SAMP application meta data repository submission form name */
+    private final static String REGISTRY_SUBMISSION_FORM_NAME = "push.php";
     /** Resource directory containing all SAMP application files */
     private final static String SAMP_STUB_FILE_DIRECTORY = "fr/jmmc/smprsc/registry/";
     /** File extension of the JMMC SAMP application meta data file format */
@@ -130,6 +132,7 @@ public class StubMetaData {
             AtomicBoolean shouldPhoneHome = new AtomicBoolean(false);
             ApplicationReportingForm dialog;
 
+            @Override
             public void run() {
 
                 // If the current application does not exist in the central repository
@@ -143,6 +146,7 @@ public class StubMetaData {
                         /** Synchronized by EDT */
                         @Override
                         public void run() {
+                            _logger.debug("Showing report window for '{}' application", _applicationName);
                             dialog = new ApplicationReportingForm(_applicationName);
                             shouldPhoneHome.set(dialog.shouldSubmit());
                         }
@@ -168,7 +172,7 @@ public class StubMetaData {
         boolean unknownApplicationFlag = false; // In order to skip later application reporting if registry querying goes wrong
 
         try {
-            final String path = computeResourcePathForApplication(_applicationName);
+            final String path = REGISTRY_BASE_URL + _applicationName + SAMP_STUB_FILE_EXTENSION;
             final URI applicationDescriptionFileURI = Http.validateURL(path);
             final String result = Http.download(applicationDescriptionFileURI, false); // Use the multi-threaded HTTP client
             _logger.debug("HTTP response : '" + result + "'.");
@@ -250,7 +254,7 @@ public class StubMetaData {
         _logger.info("Sending JMMC SAMP application '{}' XML description to JMMC registry ...", _applicationName);
 
         try {
-            final URI uri = Http.validateURL(REGISTRY_SUBMISSION_FORM_URL);
+            final URI uri = Http.validateURL(REGISTRY_BASE_URL + REGISTRY_SUBMISSION_FORM_NAME);
             // use the multi threaded HTTP client
             final String result = Http.post(uri, false, new PostQueryProcessor() {
 
