@@ -8,7 +8,6 @@ import com.jidesoft.swing.CheckBoxTreeSelectionModel;
 import fr.jmmc.jmcs.gui.PreferencesView;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.ImageUtils;
-import fr.jmmc.smprsc.StubRegistry;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.stub.StubMetaData;
 import fr.jmmc.smprsc.data.stub.model.Metadata;

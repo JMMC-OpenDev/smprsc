@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
-package fr.jmmc.smprsc;
+package fr.jmmc.smprsc.data.list;
 
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.XmlBindException;
@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 /**
  * smprsc access singleton.
  * 
- * TODO : Move all stub related methods elsewhere
- * 
  * @author Sylvain LAFRASSE
  */
 public class StubRegistry {
@@ -38,10 +36,8 @@ public class StubRegistry {
     private static StubRegistry _singleton = new StubRegistry();
     /** package name for JAXB generated code */
     private final static String SAMP_STUB_LIST_JAXB_PACKAGE = "fr.jmmc.smprsc.data.list.model";
-    /** SAMP stub list file name */
-    public static final String SAMP_STUB_LIST_FILENAME = "__index__.xml";
     /** SAMP stub application files path */
-    public static final String SAMP_STUB_DATA_FILE_PATH = "fr/jmmc/smprsc/registry/";
+    public static final String SAMP_STUB_LIST_FILE_PATH = "fr/jmmc/smprsc/registry/__index__.xml";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
     /** Known application names list */
@@ -59,7 +55,7 @@ public class StubRegistry {
         jf = JAXBFactory.getInstance(SAMP_STUB_LIST_JAXB_PACKAGE);
 
         // Try to load __index__.xml resource
-        final URL fileURL = FileUtils.getResource(SAMP_STUB_DATA_FILE_PATH + SAMP_STUB_LIST_FILENAME);
+        final URL fileURL = FileUtils.getResource(SAMP_STUB_LIST_FILE_PATH);
         final SampStubList sampStubList = loadData(fileURL);
 
         // Members creation
