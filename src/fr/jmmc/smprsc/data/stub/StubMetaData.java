@@ -40,17 +40,15 @@ public class StubMetaData {
     // Constants
     /** Package name for JAXB generated code */
     private final static String STUB_DATA_MODEL_JAXB_PATH = "fr.jmmc.smprsc.data.stub.model";
-    /** URL of the JMMC SAMP application meta data repository */
-    private final static String REGISTRY_ROOT_URL = "http://jmmc.fr/~smprun/stubs/";
-    //private static final String REGISTRY_ROOT_URL = "http://jmmc.fr/~lafrasse/stubs/";
-    /** Directory containing all JMMC SAMP application meta data files*/
-    private final static String SAMP_STUB_FILE_DIRECTORY = REGISTRY_ROOT_URL + "registry/";
+    /** URL of the JMMC SAMP application meta data repository submission form */
+    private final static String REGISTRY_SUBMISSION_FORM_URL = "http://jmmc.fr/~smprun/stubs/push.php";
+    /** Resource directory containing all SAMP application files */
+    private final static String SAMP_STUB_FILE_DIRECTORY = "fr/jmmc/smprsc/registry/";
     /** File extension of the JMMC SAMP application meta data file format */
     private final static String SAMP_STUB_FILE_EXTENSION = ".xml";
     /** Application icon files extension */
     private final static String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
-    /** Submission form name */
-    private final static String SUBMISSION_FORM = "push.php";
+    // Statics
     /** Logger */
     private final static Logger _logger = LoggerFactory.getLogger(StubMetaData.class.getName());
     /** JAXB initialization */
@@ -252,7 +250,7 @@ public class StubMetaData {
         _logger.info("Sending JMMC SAMP application '{}' XML description to JMMC registry ...", _applicationName);
 
         try {
-            final URI uri = Http.validateURL(REGISTRY_ROOT_URL + SUBMISSION_FORM);
+            final URI uri = Http.validateURL(REGISTRY_SUBMISSION_FORM_URL);
             // use the multi threaded HTTP client
             final String result = Http.post(uri, false, new PostQueryProcessor() {
 
