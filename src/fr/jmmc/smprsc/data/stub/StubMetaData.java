@@ -10,7 +10,6 @@ import fr.jmmc.jmcs.network.Http;
 import fr.jmmc.jmcs.network.PostQueryProcessor;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.FileUtils;
-import fr.jmmc.smprsc.StubRegistry;
 import fr.jmmc.smprsc.data.stub.model.SampStub;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -20,8 +19,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -29,39 +27,45 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.astrogrid.samp.Metadata;
 import org.astrogrid.samp.Subscriptions;
 import org.ivoa.util.concurrent.ThreadExecutors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Real SAMP application meta data older, that can report to JMMC central registry if not referenced yet.
  *
  * @author Sylvain LAFRASSE
  */
-public class SampApplicationMetaData {
+public class StubMetaData {
 
-    /** Logger */
-    private static final Logger _logger = Logger.getLogger(SampApplicationMetaData.class.getName());
+    // Constants
     /** Package name for JAXB generated code */
     private final static String STUB_DATA_MODEL_JAXB_PATH = "fr.jmmc.smprsc.data.stub.model";
-    /** JAXB initialization */
-    private final static JAXBFactory _jaxbFactory = JAXBFactory.getInstance(STUB_DATA_MODEL_JAXB_PATH);
     /** URL of the JMMC SAMP application meta data repository */
-    private static final String REGISTRY_ROOT_URL = "http://jmmc.fr/~smprun/stubs/";
+    private final static String REGISTRY_ROOT_URL = "http://jmmc.fr/~smprun/stubs/";
     //private static final String REGISTRY_ROOT_URL = "http://jmmc.fr/~lafrasse/stubs/";
     /** Directory containing all JMMC SAMP application meta data files*/
-    private static final String FILE_DIRECTORY = "registry/";
+    private final static String SAMP_STUB_FILE_DIRECTORY = REGISTRY_ROOT_URL + "registry/";
     /** File extension of the JMMC SAMP application meta data file format */
-    private static final String FILE_EXTENSION = ".xml";
+    private final static String SAMP_STUB_FILE_EXTENSION = ".xml";
+    /** Application icon files extension */
+    private final static String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
     /** Submission form name */
-    private static final String SUBMISSION_FORM = "push.php";
+    private final static String SUBMISSION_FORM = "push.php";
+    /** Logger */
+    private final static Logger _logger = LoggerFactory.getLogger(StubMetaData.class.getName());
+    /** JAXB initialization */
+    private final static JAXBFactory _jaxbFactory = JAXBFactory.getInstance(STUB_DATA_MODEL_JAXB_PATH);
     /** Loaded SampStub cache */
-    private static final Map<String, SampStub> _cachedSampStubs = new HashMap<String, SampStub>();
+    private final static Map<String, SampStub> _cachedSampStubs = new HashMap<String, SampStub>();
+    // Members
     /** SAMP application meta data container */
-    private SampStub _data = new SampStub();
+    private final SampStub _data = new SampStub();
     /** Real application exact name */
-    private String _applicationName;
+    private final String _applicationName;
     /** Real application SAMP meta data */
-    private Metadata _sampMetaData;
+    private final Metadata _sampMetaData;
     /** Real application SAMP mTypes */
-    private Subscriptions _sampSubscriptions;
+    private final Subscriptions _sampSubscriptions;
 
     /**
      * Constructor.
@@ -69,9 +73,9 @@ public class SampApplicationMetaData {
      * @param metadata SAMP Meta data
      * @param subscriptions SAMP mTypes
      */
-    public SampApplicationMetaData(Metadata metadata, Subscriptions subscriptions) {
+    public StubMetaData(Metadata metadata, Subscriptions subscriptions) {
 
-        _logger.fine("Serializing SAMP application meta-data.");
+        _logger.debug("Serializing SAMP application meta-data.");
 
         _applicationName = metadata.getName();
         _data.setUid(_applicationName);
@@ -84,25 +88,37 @@ public class SampApplicationMetaData {
         SampStub sampStub = _cachedSampStubs.get(applicationName);
         if (sampStub == null) {
 
-            final String path = StubRegistry.forgeApplicationResourcePath(applicationName);
-            sampStub = loadSampStubFromResourcePath(path);
+            sampStub = loadSampStubForApplication(applicationName);
             _cachedSampStubs.put(applicationName, sampStub);
         }
 
         return sampStub;
     }
 
-    private static SampStub loadSampStubFromResourcePath(final String path) {
-        final URL resourceURL = FileUtils.getResource(path);
-        // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
+    /**
+     * Try to load embedded icon for given application name.
+     * 
+     * @param applicationName the application name of the sought icon.
+     * @return the icon if found, null otherwise.
+     */
+    public static ImageIcon getEmbeddedApplicationIcon(String applicationName) {
+
+        ImageIcon icon = null;
+
         try {
-            final Unmarshaller u = _jaxbFactory.createUnMarshaller();
-            return (SampStub) u.unmarshal(new BufferedInputStream(resourceURL.openStream()));
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Load failure on " + resourceURL, ioe);
-        } catch (JAXBException je) {
-            throw new IllegalArgumentException("Load failure on " + resourceURL, je);
+            // Forge icon resource path
+            final String iconResourcePath = SAMP_STUB_FILE_DIRECTORY + applicationName + SAMP_STUB_ICON_FILE_EXTENSION;
+
+            // Try to load application icon resource
+            final URL fileURL = FileUtils.getResource(iconResourcePath);
+            if (fileURL != null) {
+                icon = new ImageIcon(fileURL);
+            }
+        } catch (IllegalStateException ise) {
+            _logger.warn("Could not find '{}' embedded icon.", applicationName);
         }
+
+        return icon;
     }
 
     /**
@@ -150,23 +166,46 @@ public class SampApplicationMetaData {
      */
     private boolean isNotKnownYet() {
 
-        _logger.info("Querying JMMC SAMP application registry for '" + _applicationName + "' application ...");
+        _logger.info("Querying JMMC SAMP application registry for '{}' application ...", _applicationName);
         boolean unknownApplicationFlag = false; // In order to skip later application reporting if registry querying goes wrong
 
         try {
-            final URI applicationDescriptionFileURI = Http.validateURL(REGISTRY_ROOT_URL + FILE_DIRECTORY + _applicationName + FILE_EXTENSION);
+            final String path = computeResourcePathForApplication(_applicationName);
+            final URI applicationDescriptionFileURI = Http.validateURL(path);
             final String result = Http.download(applicationDescriptionFileURI, false); // Use the multi-threaded HTTP client
-            _logger.fine("HTTP response : '" + result + "'.");
+            _logger.debug("HTTP response : '" + result + "'.");
 
             // Decipher whether the meta-data is alredy registered or not
             unknownApplicationFlag = (result == null) || (result.length() == 0);
-            _logger.info("SAMP application '" + _applicationName + "'" + (unknownApplicationFlag ? " not " : " ") + "found in JMMC registry.");
+            _logger.info("SAMP application '{}' {}found in JMMC registry.", _applicationName, (unknownApplicationFlag ? "not " : ""));
 
         } catch (IOException ioe) {
-            _logger.log(Level.SEVERE, "Cannot get SAMP application meta-data : ", ioe);
+            _logger.error("Cannot get SAMP application meta-data : ", ioe);
         }
 
         return unknownApplicationFlag;
+    }
+
+    private static SampStub loadSampStubForApplication(final String applicationName) {
+
+        final String path = computeResourcePathForApplication(applicationName);
+        final URL resourceURL = FileUtils.getResource(path);
+        // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
+        try {
+            final Unmarshaller u = _jaxbFactory.createUnMarshaller();
+            return (SampStub) u.unmarshal(new BufferedInputStream(resourceURL.openStream()));
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Load failure on " + resourceURL, ioe);
+        } catch (JAXBException je) {
+            throw new IllegalArgumentException("Load failure on " + resourceURL, je);
+        }
+    }
+
+    private static String computeResourcePathForApplication(String applicationName) {
+        if (applicationName == null) {
+            throw new IllegalArgumentException("applicationName");
+        }
+        return SAMP_STUB_FILE_DIRECTORY + applicationName + SAMP_STUB_FILE_EXTENSION;
     }
 
     /**
@@ -206,11 +245,11 @@ public class SampApplicationMetaData {
 
         // Check parameter vailidty
         if (xml == null) {
-            _logger.warning("Something went wrong while serializing SAMP application '" + _applicationName + "' meta-data ... aborting report.");
+            _logger.warn("Something went wrong while serializing SAMP application '{}' meta-data ... aborting report.", _applicationName);
             return;
         }
 
-        _logger.info("Sending JMMC SAMP application '" + _applicationName + "' XML description to JMMC registry ...");
+        _logger.info("Sending JMMC SAMP application '{}' XML description to JMMC registry ...", _applicationName);
 
         try {
             final URI uri = Http.validateURL(REGISTRY_ROOT_URL + SUBMISSION_FORM);
@@ -229,17 +268,17 @@ public class SampApplicationMetaData {
                 }
             });
 
-            _logger.fine("HTTP response : '" + result + "'.");
+            _logger.debug("HTTP response : '{}'.", result);
 
             // Parse result for failure
             if (result != null) {
-                _logger.info("Sent SAMP application '" + _applicationName + "' XML description to JMMC regitry.");
+                _logger.info("Sent SAMP application '{}' XML description to JMMC regitry.", _applicationName);
             } else {
-                _logger.warning("SAMP application meta-data were not sent properly.");
+                _logger.warn("SAMP application meta-data were not sent properly.");
             }
 
         } catch (IOException ioe) {
-            _logger.log(Level.SEVERE, "Cannot send SAMP application meta-data : ", ioe);
+            _logger.error("Cannot send SAMP application meta-data : ", ioe);
         }
     }
 
@@ -255,12 +294,12 @@ public class SampApplicationMetaData {
             marshaller.marshal(_data, stringWriter);
 
         } catch (JAXBException je) {
-            _logger.log(Level.SEVERE, "Cannot marshall SAMP application meta-data : ", je);
+            _logger.error("Cannot marshall SAMP application meta-data : ", je);
             return null;
         }
 
         final String xml = stringWriter.toString();
-        _logger.fine("Generated SAMP application '" + _applicationName + "' XML description :\n" + xml);
+        _logger.debug("Generated SAMP application '{}' XML description :\n{}", _applicationName, xml);
         return xml;
     }
 }

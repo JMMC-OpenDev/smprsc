@@ -9,6 +9,7 @@ import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.list.model.Family;
 import fr.jmmc.smprsc.data.list.model.SampStubList;
+import fr.jmmc.smprsc.data.stub.StubMetaData;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.ivoa.util.CollectionUtils;
@@ -42,10 +42,6 @@ public class StubRegistry {
     public static final String SAMP_STUB_LIST_FILENAME = "__index__.xml";
     /** SAMP stub application files path */
     public static final String SAMP_STUB_DATA_FILE_PATH = "fr/jmmc/smprsc/registry/";
-    /** SAMP stub application files extension */
-    public static final String SAMP_STUB_DATA_FILE_EXTENSION = ".xml";
-    /** Application icon files extension */
-    public static final String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
     /** internal JAXB Factory */
     private final JAXBFactory jf;
     /** Known application names list */
@@ -85,7 +81,7 @@ public class StubRegistry {
 
                 _knownApplicationNames.add(applicationName);
 
-                if (getEmbeddedApplicationIcon(applicationName) != null) {
+                if (StubMetaData.getEmbeddedApplicationIcon(applicationName) != null) {
                     visibleCategoryApplications.add(applicationName);
                 }
             }
@@ -130,39 +126,6 @@ public class StubRegistry {
      */
     public static List<String> getCategoryVisibleApplicationNames(Category category) {
         return _singleton._categoryVisibleApplicationNames.get(category);
-    }
-
-    /**
-     * Try to load embedded icon for given application name.
-     * 
-     * @param applicationName the application name of the sought icon.
-     * @return the icon if found, null otherwise.
-     */
-    public static ImageIcon getEmbeddedApplicationIcon(String applicationName) {
-
-        ImageIcon icon = null;
-
-        try {
-            // Forge icon resource path
-            final String iconResourcePath = SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_ICON_FILE_EXTENSION;
-
-            // Try to load application icon resource
-            final URL fileURL = FileUtils.getResource(iconResourcePath);
-            if (fileURL != null) {
-                icon = new ImageIcon(fileURL);
-            }
-        } catch (IllegalStateException ise) {
-            _logger.warn("Could not find '{}' embedded icon.", applicationName);
-        }
-
-        return icon;
-    }
-
-    /**
-     * @return the complete resource path of the given application.
-     */
-    public static String forgeApplicationResourcePath(final String applicationName) {
-        return SAMP_STUB_DATA_FILE_PATH + applicationName + SAMP_STUB_DATA_FILE_EXTENSION;
     }
 
     /**

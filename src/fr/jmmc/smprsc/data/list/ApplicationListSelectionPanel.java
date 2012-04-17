@@ -10,7 +10,7 @@ import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.smprsc.StubRegistry;
 import fr.jmmc.smprsc.data.list.model.Category;
-import fr.jmmc.smprsc.data.stub.SampApplicationMetaData;
+import fr.jmmc.smprsc.data.stub.StubMetaData;
 import fr.jmmc.smprsc.data.stub.model.Metadata;
 import fr.jmmc.smprsc.data.stub.model.SampStub;
 import java.awt.BorderLayout;
@@ -100,7 +100,7 @@ public class ApplicationListSelectionPanel extends JPanel {
             for (String applicationName : StubRegistry.getCategoryVisibleApplicationNames(applicationCategory)) {
 
                 // Add the application node only if it is a visible one
-                ImageIcon applicationIcon = StubRegistry.getEmbeddedApplicationIcon(applicationName);
+                ImageIcon applicationIcon = StubMetaData.getEmbeddedApplicationIcon(applicationName);
                 // Load application icons once and for all
                 ImageIcon resizedApplicationIcon = ImageUtils.getScaledImageIcon(applicationIcon, ICON_SIZE, ICON_SIZE);
                 _cachedApplicationIcons.put(applicationName, resizedApplicationIcon);
@@ -122,7 +122,7 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         // Load application's SAMP meta data from JAR
         _logger.trace("Loading '{}' application meta data :", applicationName);
-        SampStub applicationData = SampApplicationMetaData.retrieveSampStubForApplication(applicationName);
+        SampStub applicationData = StubMetaData.retrieveSampStubForApplication(applicationName);
         HashMap<String, String> metaDataMap = new HashMap<String, String>();
         for (Metadata applicationMetaData : applicationData.getMetadatas()) {
             final String metaDataKey = applicationMetaData.getKey();
