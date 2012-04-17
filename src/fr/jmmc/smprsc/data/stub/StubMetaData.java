@@ -175,11 +175,11 @@ public class StubMetaData {
             final String path = REGISTRY_BASE_URL + _applicationName + SAMP_STUB_FILE_EXTENSION;
             final URI applicationDescriptionFileURI = Http.validateURL(path);
             final String result = Http.download(applicationDescriptionFileURI, false); // Use the multi-threaded HTTP client
-            _logger.debug("HTTP response : '" + result + "'.");
+            _logger.debug("HTTP response : '{}'.", result);
 
             // Decipher whether the meta-data is alredy registered or not
             unknownApplicationFlag = (result == null) || (result.length() == 0);
-            _logger.info("SAMP application '{}' {}found in JMMC registry.", _applicationName, (unknownApplicationFlag ? "not " : ""));
+            _logger.info("SAMP application '{}' {} found in JMMC registry.", _applicationName, (unknownApplicationFlag ? "not" : ""));
 
         } catch (IOException ioe) {
             _logger.error("Cannot get SAMP application meta-data : ", ioe);
