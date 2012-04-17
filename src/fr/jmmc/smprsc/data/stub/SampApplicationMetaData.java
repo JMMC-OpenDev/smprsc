@@ -10,12 +10,15 @@ import fr.jmmc.jmcs.network.Http;
 import fr.jmmc.jmcs.network.PostQueryProcessor;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.smprsc.StubRegistry;
 import fr.jmmc.smprsc.data.stub.model.SampStub;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +52,8 @@ public class SampApplicationMetaData {
     private static final String FILE_EXTENSION = ".xml";
     /** Submission form name */
     private static final String SUBMISSION_FORM = "push.php";
+    /** Loaded SampStub cache */
+    private static final Map<String, SampStub> _cachedSampStubs = new HashMap<String, SampStub>();
     /** SAMP application meta data container */
     private SampStub _data = new SampStub();
     /** Real application exact name */
@@ -74,7 +79,20 @@ public class SampApplicationMetaData {
         _sampSubscriptions = subscriptions;
     }
 
-    public static SampStub loadSampStubFromResourcePath(final String path) {
+    public static SampStub retrieveSampStubForApplication(String applicationName) {
+
+        SampStub sampStub = _cachedSampStubs.get(applicationName);
+        if (sampStub == null) {
+
+            final String path = StubRegistry.forgeApplicationResourcePath(applicationName);
+            sampStub = loadSampStubFromResourcePath(path);
+            _cachedSampStubs.put(applicationName, sampStub);
+        }
+
+        return sampStub;
+    }
+
+    private static SampStub loadSampStubFromResourcePath(final String path) {
         final URL resourceURL = FileUtils.getResource(path);
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         try {

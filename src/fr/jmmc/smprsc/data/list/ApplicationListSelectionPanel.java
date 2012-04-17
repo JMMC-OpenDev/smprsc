@@ -121,9 +121,8 @@ public class ApplicationListSelectionPanel extends JPanel {
     private void cacheApplicationMetaData(String applicationName) {
 
         // Load application's SAMP meta data from JAR
-        String applicationMetaDataResourcePath = StubRegistry.forgeApplicationResourcePath(applicationName);
-        _logger.trace("Loading '{}' meta data from path '{}' :", applicationName, applicationMetaDataResourcePath);
-        SampStub applicationData = SampApplicationMetaData.loadSampStubFromResourcePath(applicationMetaDataResourcePath);
+        _logger.trace("Loading '{}' application meta data :", applicationName);
+        SampStub applicationData = SampApplicationMetaData.retrieveSampStubForApplication(applicationName);
         HashMap<String, String> metaDataMap = new HashMap<String, String>();
         for (Metadata applicationMetaData : applicationData.getMetadatas()) {
             final String metaDataKey = applicationMetaData.getKey();
