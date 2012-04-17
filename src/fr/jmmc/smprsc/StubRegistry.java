@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * smprsc access singleton.
  * 
- * TODO : Manage a central SampStub cache.
+ * TODO : Move all stub related methods elsewhere
  * 
  * @author Sylvain LAFRASSE
  */
