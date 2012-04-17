@@ -110,14 +110,64 @@ public class ApplicationListSelectionPanel extends JPanel {
                 categoryNode.add(applicationNode);
                 _logger.trace("\t- found application '{}' with icon.", applicationName);
 
-                // Retrieve beta JNLP check box state
-                final boolean applicationBetaJnlpUrlInUse = isApplicationBetaJnlpUrlInUse(applicationName);
-                _cachedBetaCheckBoxStates.put(applicationName, applicationBetaJnlpUrlInUse);
-                // TODO : put null if no beta URL available.
+                // Load application's SAMP meta data from JAR
+                cacheApplicationMetaData(applicationName);
             }
         }
 
         return rootNode;
+    }
+
+    private void cacheApplicationMetaData(String applicationName) {
+
+        // Load application's SAMP meta data from JAR
+        String applicationMetaDataResourcePath = StubRegistry.forgeApplicationResourcePath(applicationName);
+        _logger.trace("Loading '{}' meta data from path '{}' :", applicationName, applicationMetaDataResourcePath);
+        SampStub applicationData = SampApplicationMetaData.loadSampStubFromResourcePath(applicationMetaDataResourcePath);
+        HashMap<String, String> metaDataMap = new HashMap<String, String>();
+        for (Metadata applicationMetaData : applicationData.getMetadatas()) {
+            final String metaDataKey = applicationMetaData.getKey();
+            final String metaDataValue = applicationMetaData.getValue();
+            metaDataMap.put(metaDataKey, metaDataValue);
+            _logger.trace("\t- found meta data ['{}' -> '{}'].", metaDataKey, metaDataValue);
+        }
+
+        // HTML generation
+        _logger.debug("Generating HTML description for '{}' application meta data :", applicationName);
+        final StringBuilder generatedHtml = new StringBuilder(4096);
+        generatedHtml.append("<HTML><HEAD></HEAD><BODY>");
+        for (SampMetaData metaData : SampMetaData.values()) {
+
+            // Label
+            final String label = metaData.getLabel();
+            if (label == null) {
+                continue;
+            }
+
+            // Value
+            String value = metaDataMap.get(metaData.id());
+            if (value != null) {
+                generatedHtml.append("<B>").append(label).append(":</B> ");
+                generatedHtml.append(value).append("<BR/><BR/>");
+            }
+            _logger.trace("\t- found meta data for '{}' = '{}'.", label, value);
+        }
+        generatedHtml.append("</BODY></HTML>");
+
+        // Cache application description for later retrieve
+        final String applicationDescription = generatedHtml.toString();
+        _cachedApplicationDescriptions.put(applicationName, applicationDescription);
+
+        // Retrieve and cache whether the current application has a beta JNLP URL or not
+        final String betaJnlpUrl = metaDataMap.get(SampMetaData.JNLP_BETA_URL.id());
+        if (betaJnlpUrl != null) {
+            // If so get its prefered state
+            final boolean betaIsEnabled = isApplicationBetaJnlpUrlInUse(applicationName);
+            _cachedBetaCheckBoxStates.put(applicationName, betaIsEnabled);
+            _logger.trace("\t- found beta JNLP URL, retrieveing its saved checkbox state '{}'.", betaIsEnabled);
+        } else {
+            _logger.trace("\t- not found beta JNLP URL, leaving checkbox disabled.");
+        }
     }
 
     private CheckBoxTree setupCheckBoxTree() {
@@ -343,56 +393,8 @@ public class ApplicationListSelectionPanel extends JPanel {
         // if the application description is not yet cached
         String applicationDescription = _cachedApplicationDescriptions.get(applicationName);
         if (applicationDescription == null) {
-
-            // Load application's SAMP meta data from JAR
-            String applicationMetaDataResourcePath = StubRegistry.forgeApplicationResourcePath(applicationName);
-
-            _logger.trace("Loading '{}' meta data from path '{}' :", applicationName, applicationMetaDataResourcePath);
-            SampStub applicationData = SampApplicationMetaData.loadSampStubFromResourcePath(applicationMetaDataResourcePath);
-
-            HashMap<String, String> metaDataMap = new HashMap<String, String>();
-            for (Metadata applicationMetaData : applicationData.getMetadatas()) {
-                final String metaDataKey = applicationMetaData.getKey();
-                final String metaDataValue = applicationMetaData.getValue();
-                metaDataMap.put(metaDataKey, metaDataValue);
-                _logger.trace("\t- found meta data ['{}' -> '{}'].", metaDataKey, metaDataValue);
-            }
-
-            // HTML generation
-            _logger.debug("Generating HTML for '{}' application :", applicationName);
-            final StringBuilder generatedHtml = new StringBuilder(4096);
-            generatedHtml.append("<HTML><HEAD></HEAD><BODY>");
-            for (SampMetaData metaData : SampMetaData.values()) {
-
-                // Label
-                final String label = metaData.getLabel();
-                if (label == null) {
-                    continue;
-                }
-
-                // Value
-                String value = metaDataMap.get(metaData.id());
-                if (value != null) {
-                    generatedHtml.append("<B>").append(label).append(":</B> ");
-                    generatedHtml.append(value).append("<BR/><BR/>");
-                }
-                _logger.trace("\t- found meta data for '{}' = '{}'.", label, value);
-            }
-            generatedHtml.append("</BODY></HTML>");
-
-            // Retrieve and cache wether the current application has a beta JNLP URL or not
-            final String betaJnlpUrl = metaDataMap.get(SampMetaData.JNLP_BETA_URL.id());
-            if (betaJnlpUrl != null) {
-                final boolean betaIsEnabled = isApplicationBetaJnlpUrlInUse(applicationName);
-                _cachedBetaCheckBoxStates.put(applicationName, betaIsEnabled);
-                _logger.trace("\t- found beta JNLP URL, retrieveing saved checkbox state.");
-            }
-
-            // Cache application description for later use
-            applicationDescription = generatedHtml.toString();
-            _cachedApplicationDescriptions.put(applicationName, applicationDescription);
-        } else {
-            _logger.debug("Retrieved cached '{}' application description.", applicationName);
+            _logger.error("Could not find '{}' application description.", applicationName);
+            return;
         }
 
         // Set application description in editor pane
