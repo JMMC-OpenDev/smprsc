@@ -36,7 +36,7 @@ Description: Store JMMC AppLauncher Stub meta data.
             </jaxb:globalBindings>
 
             <jaxb:schemaBindings>
-                <jaxb:package name="fr.jmmc.smprun.stub.data.model"/>
+                <jaxb:package name="fr.jmmc.smprsc.data.stub.model"/>
             </jaxb:schemaBindings>
 
         </xsd:appinfo>

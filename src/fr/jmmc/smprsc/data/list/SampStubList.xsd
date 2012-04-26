@@ -36,7 +36,7 @@ Description: Store JMMC AppLauncher Stub list.
             </jaxb:globalBindings>
 
             <jaxb:schemaBindings>
-                <jaxb:package name="fr.jmmc.smprsc.data.model"/>
+                <jaxb:package name="fr.jmmc.smprsc.data.list.model"/>
             </jaxb:schemaBindings>
 
         </xsd:appinfo>
@@ -83,6 +83,7 @@ Description: Store JMMC AppLauncher Stub list.
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="Interferometry"/>
             <xsd:enumeration value="Essentials"/>
+            <xsd:enumeration value="WebApps"/>
         </xsd:restriction>
     </xsd:simpleType>
 

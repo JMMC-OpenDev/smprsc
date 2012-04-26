@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SampStubList>
     <family category="Interferometry">
-        <application>AppLauncherTester</application>
         <application>Aspro2</application>
         <application>SearchCal</application>
         <application>LITpro</application>
     </family>
     <family category="Essentials">
+        <application>AppLauncherTester</application>
         <application>Aladin</application>
         <application>VOSpec</application>
         <application>topcat</application>
         <application>splat</application>
+    </family>
+    <family category="WebApps">
+        <application>VizieR</application>
+<!--        <application>Simbad</application>-->
     </family>
 </SampStubList>

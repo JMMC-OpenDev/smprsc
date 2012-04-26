@@ -70,7 +70,7 @@ Description: ANT script.
         <xjc destdir="${sources}" schema="${sources}/fr/jmmc/smprsc/data/list/SampStubList.xsd"/>
     </target>
 
-    <target name="genStubXsdCode" depends="checkAppLauncherRsc" description="Generates the Java code from List XML schemas (XSD).">
+    <target name="genStubXsdCode" depends="checkAppLauncherRsc" description="Generates the Java code from Stub XML schemas (XSD).">
         <echo>Generating Java code for SampStubDescriptor.xsd</echo>
         <mkdir dir="${sources}/fr/jmmc/smprsc/data/stub/model" />
         <xjc destdir="${sources}" schema="${sources}/fr/jmmc/smprsc/data/stub/SampStubDescriptor.xsd"/>
