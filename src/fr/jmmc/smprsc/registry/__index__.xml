@@ -12,8 +12,10 @@
         <application>topcat</application>
         <application>splat</application>
     </family>
+<!--
     <family category="WebApps">
         <application>VizieR</application>
-<!--        <application>Simbad</application>-->
+        <application>Simbad</application>
     </family>
+-->
 </SampStubList>

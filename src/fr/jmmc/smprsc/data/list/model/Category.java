@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="Interferometry"/>
  *     &lt;enumeration value="Essentials"/>
- *     &lt;enumeration value="WebApps"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -29,9 +28,7 @@ public enum Category {
     @XmlEnumValue("Interferometry")
     INTERFEROMETRY("Interferometry"),
     @XmlEnumValue("Essentials")
-    ESSENTIALS("Essentials"),
-    @XmlEnumValue("WebApps")
-    WEB_APPS("WebApps");
+    ESSENTIALS("Essentials");
     private final String value;
 
     Category(String v) {

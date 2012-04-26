@@ -83,7 +83,7 @@ Description: Store JMMC AppLauncher Stub list.
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="Interferometry"/>
             <xsd:enumeration value="Essentials"/>
-            <xsd:enumeration value="WebApps"/>
+<!--            <xsd:enumeration value="WebApps"/>-->
         </xsd:restriction>
     </xsd:simpleType>
 
