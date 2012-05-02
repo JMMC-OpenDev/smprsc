@@ -55,7 +55,7 @@ public class ApplicationListSelectionPanel extends JPanel {
     // Description stuff
     private static final int EDITOR_PANE_WIDTH = PreferencesView.FRAME_WIDTH - TREE_WIDTH;
     private JEditorPane _descriptionEditorPane;
-    private JScrollPane _descriptionScrollPane;
+    protected JScrollPane _descriptionScrollPane;
     private JCheckBox _betaCheckBox;
 
     public ApplicationListSelectionPanel() {
@@ -384,7 +384,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         return betaCheckBox;
     }
 
-    private void fillApplicationDescriptionPane(String applicationName) {
+    protected void fillApplicationDescriptionPane(String applicationName) {
 
         // Clear the description if no application name provided
         if (applicationName == null) {
