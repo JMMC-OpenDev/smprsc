@@ -6,8 +6,10 @@ package fr.jmmc.smprsc.data.list;
 import com.jidesoft.swing.CheckBoxTree;
 import com.jidesoft.swing.CheckBoxTreeSelectionModel;
 import fr.jmmc.jmcs.gui.PreferencesView;
+import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.ImageUtils;
+import fr.jmmc.jmcs.util.MimeType;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.stub.StubMetaData;
 import fr.jmmc.smprsc.data.stub.model.Metadata;
@@ -18,10 +20,13 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
@@ -146,9 +151,17 @@ public class ApplicationListSelectionPanel extends JPanel {
             String value = metaDataMap.get(metaData.id());
             if (value != null) {
                 generatedHtml.append("<B>").append(label).append(":</B> ");
-                generatedHtml.append(value).append("<BR/><BR/>");
+
+                final MimeType mimeType = metaData.mimeType();
+                if (mimeType == MimeType.URL) {
+                    generatedHtml.append("<A HREF='").append(value).append("'>").append(value).append("</A>");
+                } else {
+                    generatedHtml.append(value);
+                }
+
+                generatedHtml.append("<BR/><BR/>");
+                _logger.trace("\t- found meta data for '{}' = '{}'.", label, value);
             }
-            _logger.trace("\t- found meta data for '{}' = '{}'.", label, value);
         }
         generatedHtml.append("</BODY></HTML>");
 
@@ -323,12 +336,36 @@ public class ApplicationListSelectionPanel extends JPanel {
 
     private JEditorPane setupDescriptionEditorPane() {
 
-        JEditorPane descriptionEditorPane = new JEditorPane();
+        final JEditorPane descriptionEditorPane = new JEditorPane();
 
         descriptionEditorPane.setPreferredSize(new Dimension(EDITOR_PANE_WIDTH, PANEL_HEIGHT));
         descriptionEditorPane.setEditable(false);
         descriptionEditorPane.setMargin(new Insets(5, 5, 5, 5));
         descriptionEditorPane.setContentType("text/html");
+
+        descriptionEditorPane.addHyperlinkListener(new HyperlinkListener() {
+
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent event) {
+                // When a link is clicked
+                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+
+                    // Get the clicked URL
+                    final URL url = event.getURL();
+
+                    // If it is valid
+                    if (url != null) {
+                        // Get it in the good format
+                        final String clickedURL = url.toExternalForm();
+                        // Open the url in web browser
+                        BrowserLauncher.openURL(clickedURL);
+                    } else { // Assume it was an anchor
+                        String anchor = event.getDescription();
+                        descriptionEditorPane.scrollToReference(anchor);
+                    }
+                }
+            }
+        });
 
         return descriptionEditorPane;
     }
