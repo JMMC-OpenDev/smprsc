@@ -181,7 +181,7 @@ public class StubMetaData {
 
             // Decipher whether the meta-data is alredy registered or not
             unknownApplicationFlag = (result == null) || (result.length() == 0);
-            _logger.info("SAMP application '{}' {} found in JMMC registry.", _applicationName, (unknownApplicationFlag ? "not" : ""));
+            _logger.info("SAMP application '{}' {}found in JMMC registry.", _applicationName, (unknownApplicationFlag ? "not " : ""));
 
         } catch (IOException ioe) {
             _logger.error("Cannot get SAMP application meta-data : ", ioe);
