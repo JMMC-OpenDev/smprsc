@@ -41,7 +41,7 @@ public class StubMetaData {
     /** Package name for JAXB generated code */
     private final static String STUB_DATA_MODEL_JAXB_PATH = "fr.jmmc.smprsc.data.stub.model";
     /** Base URL of the JMMC SAMP application meta data repository */
-    private final static String REGISTRY_BASE_URL = "http://jmmc.fr/~smprun/stubs/";
+    private final static String REGISTRY_BASE_URL = "http://jmmc.fr/~smprun/stubs/";//"http://jmmc.fr/~lafrasse/stubs/";
     /** JMMC SAMP application meta data repository submission form name */
     private final static String REGISTRY_SUBMISSION_FORM_NAME = "push.php";
     /** JMMC SAMP application meta data repository directory containing all stubs definition files */
