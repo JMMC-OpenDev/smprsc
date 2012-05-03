@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SampStub uid="VizieR">
+<SampStub uid="Simbad">
     <metadata>
         <key>samp.name</key>
-        <value>VizieR</value>
+        <value>Simbad</value>
     </metadata>
     <metadata>
         <key>samp.description.text</key>
-        <value>CDS VizieR catalogs querying system</value>
+        <value>CDS Simbad database querying system</value>
     </metadata>
     <metadata>
         <key>x-samp.webapp.url</key>
-        <value>http://vizier.u-strasbg.fr/viz-bin/VizieR</value>
+        <value>http://simbad.u-strasbg.fr/simbad/</value>
     </metadata>
     <metadata>
         <key>samp.documentation.url</key>
-        <value>http://vizier.u-strasbg.fr/vizier//index.htx#desc</value>
+        <value>http://simbad.u-strasbg.fr/guide/index.htx</value>
     </metadata>
     <metadata>
         <key>author.affiliation</key>
@@ -26,6 +26,6 @@
     </metadata>
     <metadata>
         <key>home.page</key>
-        <value>http://vizier.u-strasbg.fr/</value>
+        <value>http://simbad.u-strasbg.fr/</value>
     </metadata>
 </SampStub>
