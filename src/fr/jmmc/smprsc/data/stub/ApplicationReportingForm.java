@@ -251,7 +251,7 @@ public class ApplicationReportingForm extends JDialog {
     public static void main(String[] args) {
 
         // Create dialog and wait for user response
-        ApplicationReportingForm form = new ApplicationReportingForm("Toto BlahBlah v33");
+        ApplicationReportingForm form = new ApplicationReportingForm("UnknownApp v0.0");
 
         // Output user values
         System.out.println("User answered:");
