@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SampStub uid="VizieR">
+<SampStub uid="VizieR" type="WEB">
     <metadata>
         <key>samp.name</key>
         <value>VizieR</value>

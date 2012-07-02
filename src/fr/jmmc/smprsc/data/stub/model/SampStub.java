@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;/sequence>
  *       &lt;attribute name="uid" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="lag" type="{http://www.w3.org/2001/XMLSchema}integer" default="-1" />
+ *       &lt;attribute name="type" type="{}Type" default="JNLP" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -54,6 +55,8 @@ public class SampStub {
     protected String uid;
     @XmlAttribute(name = "lag")
     protected BigInteger lag;
+    @XmlAttribute(name = "type")
+    protected Type type;
 
     /**
      * Gets the value of the metadatas property.
@@ -187,6 +190,38 @@ public class SampStub {
 
     public boolean isSetLag() {
         return (this.lag!= null);
+    }
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Type }
+     *     
+     */
+    public Type getType() {
+        if (type == null) {
+            return Type.JNLP;
+        } else {
+            return type;
+        }
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Type }
+     *     
+     */
+    public void setType(Type value) {
+        this.type = value;
+    }
+
+    public boolean isSetType() {
+        return (this.type!= null);
     }
 
 }

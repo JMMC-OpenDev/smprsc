@@ -90,6 +90,9 @@ Description: Store JMMC AppLauncher Stub meta data.
         <!-- time (in milliseconds) before which the waiting message should not be forwarded (e.g to let application startup finish) -->
         <xsd:attribute name="lag" type="xsd:integer" default="-1"/>
 
+        <!-- application type -->
+        <xsd:attribute name="type" type="Type" default="JNLP"/>
+
     </xsd:complexType>
     
     
@@ -101,5 +104,13 @@ Description: Store JMMC AppLauncher Stub meta data.
         </xsd:sequence>
     </xsd:complexType>
 
+    <!-- Define application families -->
+    <xsd:simpleType name="Type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="JNLP"/>
+            <xsd:enumeration value="WEB"/>
+            <xsd:enumeration value="CLI"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>
