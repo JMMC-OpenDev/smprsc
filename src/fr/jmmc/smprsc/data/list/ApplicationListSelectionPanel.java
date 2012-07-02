@@ -99,8 +99,8 @@ public class ApplicationListSelectionPanel extends JPanel {
         descriptionPanel.add(_betaCheckBox);
         add(descriptionPanel, BorderLayout.CENTER);
 
-        setBetaCheckBoxState(null);
-        setCliPathTextFieldValue(null);
+        changeBetaCheckBoxState(null);
+        changeCliPathTextFieldValue(null);
     }
 
     private DefaultMutableTreeNode populateTreeDataModel() {
@@ -196,17 +196,25 @@ public class ApplicationListSelectionPanel extends JPanel {
         }
 
         // Retrieve and cache whether the current application has a CLI path or not
-        final String cliPath = metaDataMap.get(SampMetaData.CLI_PATH.id());
-        if (cliPath != null) {
-            // If so get its prefered value
-            final String storedCliPath = applicationCliPath(applicationName);
-            _cachedApplicationCliPathes.put(applicationName, storedCliPath);
-            System.out.println("storedCliPath[" + applicationName + "] = " + storedCliPath);
-            _logger.trace("\t- found application CLI path, retrieveing its saved value '{}'.", storedCliPath);
+        final String defaultCliPath = metaDataMap.get(SampMetaData.CLI_PATH.id());
+        System.out.println("defaultCliPath = " + defaultCliPath);
+        if (defaultCliPath != null) {
+            // If the user already specified a prefered path
+            final String preferedCliPath = applicationCliPath(applicationName);
+            System.out.println("preferedCliPath = " + preferedCliPath);
+            if ((preferedCliPath != null) && (preferedCliPath.length() > 0)) {
+                // Use his prefered value
+                _cachedApplicationCliPathes.put(applicationName, preferedCliPath);
+            } else { // Otherwise use default value as last resorts
+                _cachedApplicationCliPathes.put(applicationName, defaultCliPath);
+            }
         } else {
-            System.out.println("storedCliPath[" + applicationName + "] = NULL");
             _logger.trace("\t- not found application CLI path, leaving textfield disabled.");
         }
+
+        final String cachedCliPath = _cachedApplicationCliPathes.get(applicationName);
+        _logger.trace("\t- found application CLI path, retrieveing its saved value '{}'.", cachedCliPath);
+        System.out.println("Cached CLI Path for application '" + applicationName + "' = '" + cachedCliPath + "'.");
     }
 
     private CheckBoxTree setupCheckBoxTree() {
@@ -445,7 +453,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         return betaCheckBox;
     }
 
-    private void setBetaCheckBoxState(Boolean state) {
+    private void changeBetaCheckBoxState(Boolean state) {
         if (state == null) {
             // Reset beta check box
             _betaCheckBox.setSelected(false);
@@ -482,7 +490,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         return cliPathTextField;
     }
 
-    private void setCliPathTextFieldValue(String cliPath) {
+    private void changeCliPathTextFieldValue(String cliPath) {
         if (cliPath == null) {
             _cliPathTextField.setText("");
             _cliPathTextField.setEnabled(false);
@@ -498,10 +506,10 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         // Clear the description if no application name provided
         if (applicationName == null) {
-            setBetaCheckBoxState(null);
+            changeBetaCheckBoxState(null);
 
             // Reset CLI path
-            setCliPathTextFieldValue(null);
+            changeCliPathTextFieldValue(null);
 
             // Reset description pane
             _descriptionEditorPane.setText("");
@@ -524,7 +532,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         _descriptionEditorPane.setCaretPosition(0);
 
         final Boolean checkBoxState = _cachedBetaCheckBoxStates.get(applicationName);
-        setBetaCheckBoxState(checkBoxState);
+        changeBetaCheckBoxState(checkBoxState);
         if (checkBoxState == null) {
             _logger.debug("No beta JLNP URL found for '{}', disabled beta checkbox.", applicationName);
         } else {
@@ -532,7 +540,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         }
 
         final String cliPath = _cachedApplicationCliPathes.get(applicationName);
-        setCliPathTextFieldValue(cliPath);
+        changeCliPathTextFieldValue(cliPath);
         System.out.println("cliPath[" + applicationName + "] = " + cliPath);
         if (cliPath == null) {
             _logger.debug("No CLI path found for '{}' application, disabled CLI textfield.", applicationName);
@@ -627,7 +635,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         frame.setVisible(true);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1000L);
         } catch (InterruptedException ex) {
             _logger.error("", ex);
         }
