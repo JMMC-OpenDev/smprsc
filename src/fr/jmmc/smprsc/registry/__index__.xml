@@ -13,6 +13,7 @@
         <application>topcat</application>
         <application>VOPlot</application>        
         <application>VOSpec</application>
+        <application>gaia</application>
     </family>
     <family category="WebApps">
         <application>Simbad</application>
