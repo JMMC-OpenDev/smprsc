@@ -197,11 +197,9 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         // Retrieve and cache whether the current application has a CLI path or not
         final String defaultCliPath = metaDataMap.get(SampMetaData.CLI_PATH.id());
-        System.out.println("defaultCliPath = " + defaultCliPath);
         if (defaultCliPath != null) {
             // If the user already specified a prefered path
             final String preferedCliPath = applicationCliPath(applicationName);
-            System.out.println("preferedCliPath = " + preferedCliPath);
             if ((preferedCliPath != null) && (preferedCliPath.length() > 0)) {
                 // Use his prefered value
                 _cachedApplicationCliPathes.put(applicationName, preferedCliPath);
@@ -214,7 +212,6 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         final String cachedCliPath = _cachedApplicationCliPathes.get(applicationName);
         _logger.trace("\t- found application CLI path, retrieveing its saved value '{}'.", cachedCliPath);
-        System.out.println("Cached CLI Path for application '" + applicationName + "' = '" + cachedCliPath + "'.");
     }
 
     private CheckBoxTree setupCheckBoxTree() {
@@ -541,7 +538,6 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         final String cliPath = _cachedApplicationCliPathes.get(applicationName);
         changeCliPathTextFieldValue(cliPath);
-        System.out.println("cliPath[" + applicationName + "] = " + cliPath);
         if (cliPath == null) {
             _logger.debug("No CLI path found for '{}' application, disabled CLI textfield.", applicationName);
         } else {
