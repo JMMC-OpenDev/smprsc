@@ -100,11 +100,11 @@ public class ApplicationReportingForm extends JDialog {
         Font font = UIManager.getFont("Label.font");
         String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
         ((HTMLDocument) _mainExplanationLabel.getDocument()).getStyleSheet().addRule(bodyRule);
-        String message = "<html><head></head><body>"
-                + "<center>AppLauncher discovered the '<b>" + _applicationName + "</b>' application it did not know yet !</center><br/>"
-                + "Do you wish to contribute making AppLauncher better, and send '" + _applicationName + "' application<br/>"
-                + "description to the JMMC ?<br/><br/>"
-                + "<small><i>No other personnal information than those optionaly provided below will be sent along.</i></small><br/>"
+        String message = "<html><<body>"
+                + "<center>AppLauncher discovered the '<b>" + _applicationName + "</b>' application it did not know yet !</center><br>"
+                + "Do you wish to contribute making AppLauncher better, and send '" + _applicationName + "' application<br>"
+                + "description to the JMMC ?<br><br>"
+                + "<small><i>No other personnal information than those optionaly provided below will be sent along.</i></small><br>"
                 + "</body></html>";
         _mainExplanationLabel.setText(message);
 
