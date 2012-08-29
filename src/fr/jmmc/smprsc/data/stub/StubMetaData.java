@@ -175,6 +175,8 @@ public class StubMetaData {
 
         try {
             final String path = REGISTRY_BASE_URL + SAMP_STUB_REGISTRY_DIRECTORY + _applicationName + SAMP_STUB_FILE_EXTENSION;
+            // BUG : handle application name with spaces inside !
+
             final URI applicationDescriptionFileURI = Http.validateURL(path);
             final String result = Http.download(applicationDescriptionFileURI, false); // Use the multi-threaded HTTP client
             _logger.debug("HTTP response : '{}'.", result);
