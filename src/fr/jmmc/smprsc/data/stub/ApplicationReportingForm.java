@@ -41,6 +41,8 @@ public class ApplicationReportingForm extends JDialog {
     private JLabel _contactEmailLabel;
     /** Contact email Field */
     private JTextField _contactEmailField;
+    /** Silently submit check box */
+    private JCheckBox _silentlySubmitCheckBox;
     /** Button to submit application meta-data to JMMC registry */
     private JButton _submitButton;
     /** Button to cancel application reporting */
@@ -53,6 +55,8 @@ public class ApplicationReportingForm extends JDialog {
     // Data stuff
     /** User answer (true for submit, false for cancel) */
     private boolean _shouldSubmit;
+    /** User answer (true for submit, false for cancel) */
+    private boolean _shouldSilentlySubmit;
     /** Hold user email address */
     private String _userEmail;
     /** Hold JNLP URL address */
@@ -75,6 +79,7 @@ public class ApplicationReportingForm extends JDialog {
     }
 
     private void initFields() {
+        _shouldSilentlySubmit = false;
         _shouldSubmit = false;
         _userEmail = null;
         _jnlpURL = null;
@@ -121,6 +126,8 @@ public class ApplicationReportingForm extends JDialog {
         _userEmail = CommonPreferences.getInstance().getPreference(CommonPreferences.FEEDBACK_REPORT_USER_EMAIL);
         _contactEmailField.setText(_userEmail);
 
+        _silentlySubmitCheckBox = new JCheckBox("Silently submit forthcoming unknown applications ?");
+        _panel.add(_silentlySubmitCheckBox);
         _submitButton = new JButton(_submitAction);
         _submitButton.setText("Submit");
         getRootPane().setDefaultButton(_submitButton);
@@ -140,16 +147,16 @@ public class ApplicationReportingForm extends JDialog {
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(_mainExplanationLabel)
-                                                                         .addGroup(layout.createParallelGroup().addGroup(layout.createSequentialGroup()
-                                                                                                                               .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(_jnlpUrlLabel).addComponent(_contactEmailLabel))
-                                                                                                                               .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(_jnlpUrlField).addComponent(_contactEmailField)))
-                                                                                                               .addGroup(layout.createSequentialGroup().addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_cancelButton).addComponent(_submitButton))));
+                .addGroup(layout.createParallelGroup().addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(_jnlpUrlLabel).addComponent(_contactEmailLabel))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(_jnlpUrlField).addComponent(_contactEmailField)))
+                .addGroup(layout.createSequentialGroup().addComponent(_silentlySubmitCheckBox).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_cancelButton).addComponent(_submitButton))));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup().addComponent(_mainExplanationLabel)
-                                              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(_jnlpUrlLabel).addComponent(_jnlpUrlField))
-                                              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(_contactEmailLabel).addComponent(_contactEmailField))
-                                              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(_cancelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_submitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(_jnlpUrlLabel).addComponent(_jnlpUrlField))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(_contactEmailLabel).addComponent(_contactEmailField))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(_cancelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_silentlySubmitCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_cancelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_submitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
     }
 
     /** Finish window setup */
@@ -169,7 +176,6 @@ public class ApplicationReportingForm extends JDialog {
 
         // Close window on either strike
         ActionListener actionListener = new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 _logger.debug("Hiding about box on keyboard shortcut.");
@@ -181,6 +187,13 @@ public class ApplicationReportingForm extends JDialog {
 
         // Show the dialog and wait for user inputs
         setVisible(true);
+    }
+
+    /**
+     * @return true if the user choose to submit, false otherwise (cancel)
+     */
+    public boolean shouldSilentlySubmit() {
+        return _shouldSilentlySubmit;
     }
 
     /**
@@ -217,11 +230,12 @@ public class ApplicationReportingForm extends JDialog {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             _logger.info("Reported SAMP application meta-data to JMMC registry.");
 
+            _shouldSilentlySubmit = _silentlySubmitCheckBox.isSelected();
             _shouldSubmit = true;
             _userEmail = _contactEmailField.getText();
             _jnlpURL = _jnlpUrlField.getText();
 
-            _logger.debug("Hiding about box on Submit button.");
+            _logger.debug("Hiding dialog box on Submit button.");
             setVisible(false);
         }
     }
@@ -239,11 +253,10 @@ public class ApplicationReportingForm extends JDialog {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             _logger.info("Cancelled SAMP application meta-data reporting.");
 
-            _shouldSubmit = false;
-            _userEmail = null;
-            _jnlpURL = null;
+            // Reset state
+            initFields();
 
-            _logger.debug("Hiding about box on Cancel button.");
+            _logger.debug("Hiding dialog box on Submit button.");
             setVisible(false);
         }
     }
@@ -255,6 +268,7 @@ public class ApplicationReportingForm extends JDialog {
 
         // Output user values
         System.out.println("User answered:");
+        System.out.println(" _shouldSilentlySubmit = '" + form.shouldSilentlySubmit() + "'.");
         System.out.println(" _shouldSubmit = '" + form.shouldSubmit() + "'.");
         System.out.println(" _userEmail    = '" + form.getUserEmail() + "'.");
         System.out.println(" _jnlpURL      = '" + form.getJnlpURL() + "'.");

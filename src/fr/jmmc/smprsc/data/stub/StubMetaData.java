@@ -3,6 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.smprsc.data.stub;
 
+import fr.jmmc.jmcs.data.preference.Preferences;
+import fr.jmmc.jmcs.data.preference.PreferencesException;
 import fr.jmmc.jmcs.gui.util.SwingUtils;
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.JAXBUtils;
@@ -61,6 +63,8 @@ public class StubMetaData {
     private final SampStub _data = new SampStub();
     /** Real application exact name */
     private final String _applicationName;
+    /** Cleaned application exact name */
+    private final String _applicationId;
     /** Real application SAMP meta data */
     private final Metadata _sampMetaData;
     /** Real application SAMP mTypes */
@@ -77,18 +81,20 @@ public class StubMetaData {
         _logger.debug("Serializing SAMP application meta-data.");
 
         _applicationName = metadata.getName();
-        _data.setUid(_applicationName);
-        _sampMetaData = metadata; // Shoyld clone it instead, but clone() is not implemented in jSAMP
+        _applicationId = FileUtils.cleanupFileName(_applicationName);
+        _data.setUid(_applicationId);
+        _sampMetaData = metadata; // Should clone it instead, but clone() is not implemented in jSAMP
         _sampSubscriptions = subscriptions;
     }
 
     public static SampStub retrieveSampStubForApplication(String applicationName) {
 
-        SampStub sampStub = _cachedSampStubs.get(applicationName);
+        String applicationId = FileUtils.cleanupFileName(applicationName);
+        SampStub sampStub = _cachedSampStubs.get(applicationId);
         if (sampStub == null) {
 
-            sampStub = loadSampStubForApplication(applicationName);
-            _cachedSampStubs.put(applicationName, sampStub);
+            sampStub = loadSampStubForApplication(applicationId);
+            _cachedSampStubs.put(applicationId, sampStub);
         }
 
         return sampStub;
@@ -104,10 +110,11 @@ public class StubMetaData {
 
         ImageIcon icon = null;
 
-        try {
-            // Forge icon resource path
-            final String iconResourcePath = SAMP_STUB_RESOURCE_DIRECTORY + applicationName + SAMP_STUB_ICON_FILE_EXTENSION;
+        // Forge icon resource path
+        final String applicationId = FileUtils.cleanupFileName(applicationName);
+        final String iconResourcePath = SAMP_STUB_RESOURCE_DIRECTORY + applicationId + SAMP_STUB_ICON_FILE_EXTENSION;
 
+        try {
             // Try to load application icon resource
             final URL fileURL = FileUtils.getResource(iconResourcePath);
             if (fileURL != null) {
@@ -122,14 +129,15 @@ public class StubMetaData {
 
     /**
      * Upload application complete description to JMMC central repository (only if not known yet).
+     * @param preferenceInstance the jMCS Preference object in which silent report flag is stored
+     * @param preferenceName the jMCS Preference key that point to the silent report flag value
      */
-    public void reportToCentralRepository() {
+    public void reportToCentralRepository(final Preferences preferenceInstance, final String preferenceName) {
 
-        // Make all the JERSEY network stuff run in the background
+        // Make all the network stuff run in the background
         ThreadExecutors.getGenericExecutor().submit(new Runnable() {
-
-            AtomicBoolean shouldPhoneHome = new AtomicBoolean(false);
-            ApplicationReportingForm dialog;
+            AtomicBoolean shouldPhoneHome = new AtomicBoolean(true);
+            ApplicationReportingForm dialog = null;
 
             @Override
             public void run() {
@@ -137,23 +145,42 @@ public class StubMetaData {
                 // If the current application does not exist in the central repository
                 if (isNotKnownYet()) {
 
-                    // TODO : Use dismissable message pane to always skip report ?
-
-                    // Ask user if it is OK to phone application description back home
-                    SwingUtils.invokeAndWaitEDT(new Runnable() {
-
-                        /** Synchronized by EDT */
-                        @Override
-                        public void run() {
-                            _logger.debug("Showing report window for '{}' application", _applicationName);
-                            dialog = new ApplicationReportingForm(_applicationName);
-                            shouldPhoneHome.set(dialog.shouldSubmit());
-                        }
-                    });
+                    // If user wants to explicitly choose to report or not
+                    final boolean silently = preferenceInstance.getPreferenceAsBoolean(preferenceName);
+                    if (!silently) {
+                        // Ask user if it is OK to phone application description back home
+                        SwingUtils.invokeAndWaitEDT(new Runnable() {
+                            /** Synchronized by EDT */
+                            @Override
+                            public void run() {
+                                _logger.debug("Showing report window for '{}' application", _applicationName);
+                                dialog = new ApplicationReportingForm(_applicationName);
+                                shouldPhoneHome.set(dialog.shouldSubmit());
+                                final boolean shouldSilentlySubmit = dialog.shouldSilentlySubmit();
+                                if (shouldSilentlySubmit != silently) {
+                                    try {
+                                        preferenceInstance.setPreference(preferenceName, shouldSilentlySubmit);
+                                        preferenceInstance.saveToFile();
+                                    } catch (PreferencesException ex) {
+                                        _logger.warn("Could not save silent report state to preference : ", ex);
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        _logger.info("Silently reporting '{}' unknown application", _applicationName);
+                    }
 
                     // If the user agreed to report unknown app
                     if (shouldPhoneHome.get()) {
-                        serializeMetaData(dialog.getUserEmail(), dialog.getJnlpURL());
+                        if (dialog == null) { // Silently
+                            serializeMetaData(null, null); // Report without further data
+                        } else { // Explicitly
+                            final String userEmail = dialog.getUserEmail();
+                            final String jnlpURL = dialog.getJnlpURL();
+                            serializeMetaData(userEmail, jnlpURL);
+                        }
+
                         final String xmlRepresentation = marshallApplicationDescription();
                         postXMLToRegistry(xmlRepresentation);
                     }
@@ -171,8 +198,7 @@ public class StubMetaData {
         boolean unknownApplicationFlag = false; // In order to skip later application reporting if registry querying goes wrong
 
         try {
-            final String path = REGISTRY_BASE_URL + SAMP_STUB_REGISTRY_DIRECTORY + _applicationName + SAMP_STUB_FILE_EXTENSION;
-            // BUG : handle application name with spaces inside !
+            final String path = REGISTRY_BASE_URL + SAMP_STUB_REGISTRY_DIRECTORY + _applicationId + SAMP_STUB_FILE_EXTENSION;
 
             final URI applicationDescriptionFileURI = Http.validateURL(path);
             final String result = Http.download(applicationDescriptionFileURI, false); // Use the multi-threaded HTTP client
@@ -192,7 +218,7 @@ public class StubMetaData {
     /**
      * Load SampStub object for the given application name.
      * @param applicationName name of application
-     * @return the associated sampstub
+     * @return the associated samp stub
      * @throws IllegalArgumentException if applicationName is null
      * @throws IllegalStateException if io exception occurs for data retrieval
      */
@@ -202,12 +228,13 @@ public class StubMetaData {
             throw new IllegalArgumentException("applicationName");
         }
 
-        final String path = SAMP_STUB_RESOURCE_DIRECTORY + applicationName + SAMP_STUB_FILE_EXTENSION;
+        String applicationId = FileUtils.cleanupFileName(applicationName);
+        final String path = SAMP_STUB_RESOURCE_DIRECTORY + applicationId + SAMP_STUB_FILE_EXTENSION;
 
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
         final URL resourceURL = FileUtils.getResource(path);
-        
-        try {    
+
+        try {
             return (SampStub) JAXBUtils.loadObject(resourceURL, _jaxbFactory);
         } catch (IOException ioe) {
             throw new IllegalStateException("Load failure on " + resourceURL, ioe);
@@ -219,6 +246,7 @@ public class StubMetaData {
      * @param jnlpURL 
      */
     private void serializeMetaData(String userEmail, String jnlpURL) {
+        System.out.println("serializeMetaData...1");
 
         fr.jmmc.smprsc.data.stub.model.Metadata tmp;
 
@@ -261,7 +289,6 @@ public class StubMetaData {
             final URI uri = Http.validateURL(REGISTRY_BASE_URL + REGISTRY_SUBMISSION_FORM_NAME);
             // use the multi threaded HTTP client
             final String result = Http.post(uri, false, new PostQueryProcessor() {
-
                 /**
                  * Process the given post method to define its HTTP input fields
                  * @param method post method to complete
@@ -269,7 +296,7 @@ public class StubMetaData {
                  */
                 @Override
                 public void process(final PostMethod method) throws IOException {
-                    method.addParameter("uid", _applicationName);
+                    method.addParameter("uid", _applicationId);
                     method.addParameter("xmlSampStub", xml);
                 }
             });
@@ -294,14 +321,14 @@ public class StubMetaData {
      * @throws XmlBindException if a JAXBException was caught while creating an marshaller 
      * @throws 
      */
-    private String marshallApplicationDescription() throws XmlBindException {                      
+    private String marshallApplicationDescription() throws XmlBindException {
         final StringWriter stringWriter = new StringWriter();
-        
+
         JAXBUtils.saveObject(stringWriter, _data, _jaxbFactory);
-        
+
         final String xml = stringWriter.toString();
         _logger.debug("Generated SAMP application '{}' XML description :\n{}", _applicationName, xml);
-        
+
         return xml;
     }
 }
