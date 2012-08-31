@@ -19,5 +19,6 @@
     <family category="WebApps">
         <application>Simbad</application>
         <application>VizieR</application>
+        <application>VOSED</application>
     </family>
 </SampStubList>
