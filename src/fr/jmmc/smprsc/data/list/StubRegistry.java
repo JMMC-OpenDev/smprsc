@@ -4,21 +4,18 @@
 package fr.jmmc.smprsc.data.list;
 
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
-import fr.jmmc.jmcs.jaxb.XmlBindException;
+import fr.jmmc.jmcs.jaxb.JAXBUtils;
 import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.list.model.Family;
 import fr.jmmc.smprsc.data.list.model.SampStubList;
 import fr.jmmc.smprsc.data.stub.StubMetaData;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import org.ivoa.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +46,7 @@ public class StubRegistry {
 
     /**
      * Private constructor called at static initialization.
+     * @throws IllegalStateException if IO, JAXBException occurs during SampStubList retrieval
      */
     private StubRegistry() {
         // Start JAXB
@@ -56,8 +54,13 @@ public class StubRegistry {
 
         // Try to load __index__.xml resource
         final URL fileURL = FileUtils.getResource(SAMP_STUB_LIST_FILE_PATH);
-        final SampStubList sampStubList = loadData(fileURL);
-
+        final SampStubList sampStubList;
+        try{
+            sampStubList = (SampStubList)JAXBUtils.loadObject(fileURL,jf);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Load failure on " + fileURL, ioe);
+        }
+        
         // Members creation
         _knownApplicationNames = new ArrayList<String>();
         _categoryApplicationNames = new EnumMap<Category, List<String>>(Category.class);
@@ -85,20 +88,6 @@ public class StubRegistry {
             if (visibleCategoryApplications.size() > 0) {
                 _categoryVisibleApplicationNames.put(currentCategory, visibleCategoryApplications);
             }
-        }
-    }
-
-    /** Invoke JAXB to load XML file */
-    private SampStubList loadData(final URL dataModelURL) throws XmlBindException, IllegalArgumentException, IllegalStateException {
-
-        // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
-        try {
-            final Unmarshaller u = jf.createUnMarshaller();
-            return (SampStubList) u.unmarshal(new BufferedInputStream(dataModelURL.openStream()));
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Load failure on " + dataModelURL, ioe);
-        } catch (JAXBException je) {
-            throw new IllegalArgumentException("Load failure on " + dataModelURL, je);
         }
     }
 
