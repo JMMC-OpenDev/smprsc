@@ -1,17 +1,14 @@
-/*******************************************************************************
- * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- ******************************************************************************/
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package fr.jmmc.smprsc.data.stub;
 
-import fr.jmmc.jmcs.App;
 import fr.jmmc.jmcs.data.preference.CommonPreferences;
-import fr.jmmc.jmcs.gui.MainMenuBar;
 import fr.jmmc.jmcs.gui.util.WindowUtils;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import org.slf4j.Logger;
@@ -20,39 +17,15 @@ import org.slf4j.LoggerFactory;
 /**
  * Search Panel
  *
- * @author Sylvain LAFRASSE.
+ * @author Sylvain LAFRASSE, Guillaume MELLA.
  */
-public class ApplicationReportingForm extends JDialog {
+public class ApplicationReportingForm extends javax.swing.JDialog {
 
     /** Logger */
     private static final Logger _logger = LoggerFactory.getLogger(ApplicationReportingForm.class.getName());
+    // Data stuff
     /** Hold the name of the application to report */
     private final String _applicationName;
-    // GUI stuff
-    /** Window panel */
-    private JPanel _panel;
-    /** main explanation label */
-    private JEditorPane _mainExplanationLabel;
-    /** 'JNLP URL:' label */
-    private JLabel _jnlpUrlLabel;
-    /** JNLP URL Field */
-    private JTextField _jnlpUrlField;
-    /** 'Contact eMail:' label */
-    private JLabel _contactEmailLabel;
-    /** Contact email Field */
-    private JTextField _contactEmailField;
-    /** Silently submit check box */
-    private JCheckBox _silentlySubmitCheckBox;
-    /** Button to submit application meta-data to JMMC registry */
-    private JButton _submitButton;
-    /** Button to cancel application reporting */
-    private JButton _cancelButton;
-    // Action stuff
-    /** Submit action */
-    private SubmitAction _submitAction;
-    /** Find Next action */
-    private CancelAction _cancelAction;
-    // Data stuff
     /** User answer (true for submit, false for cancel) */
     private boolean _shouldSubmit;
     /** User answer (true for submit, false for cancel) */
@@ -61,46 +34,34 @@ public class ApplicationReportingForm extends JDialog {
     private String _userEmail;
     /** Hold JNLP URL address */
     private String _jnlpURL;
+    // Action stuff
+    /** Submit action */
+    private SubmitAction _submitAction;
+    /** Find Next action */
+    private CancelAction _cancelAction;
 
-    /**
-     * Constructor
-     */
+    /** Creates new form ApplicationReportingForm */
     public ApplicationReportingForm(String applicationName) {
 
-        super(App.getFrame(), "Report New SAMP Application to JMMC Registry ?", true);
-
+        // Remember application name
         _applicationName = applicationName;
 
-        initFields();
+        resetState();
         setupActions();
-        createWidgets();
-        layoutWidgets();
-        prepareFrame();
+        initComponents();
+        setupMainExplanationLabel();
+        finishFrameSetup();
     }
 
-    private void initFields() {
+    private void resetState() {
         _shouldSilentlySubmit = false;
         _shouldSubmit = false;
         _userEmail = null;
         _jnlpURL = null;
     }
 
-    /** Create required actions */
-    private void setupActions() {
-        _submitAction = new SubmitAction();
-        _cancelAction = new CancelAction();
-    }
-
-    /** Create graphical widgets */
-    private void createWidgets() {
-
-        _panel = new JPanel();
-
-        _mainExplanationLabel = new JEditorPane();
-        _mainExplanationLabel.setEditable(false);
-        _mainExplanationLabel.setOpaque(false); // To keep default background color instead of the default white
+    private void setupMainExplanationLabel() {
         _mainExplanationLabel.setContentType(new HTMLEditorKit().getContentType());
-        _mainExplanationLabel.setCaretPosition(0); // Show first line of editor pane, and not its last line as by default !
         // Add a CSS rule to force body tags to use the default label font instead of the value in javax.swing.text.html.default.csss
         Font font = UIManager.getFont("Label.font");
         String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
@@ -112,109 +73,27 @@ public class ApplicationReportingForm extends JDialog {
                 + "<small><i>No other personnal information than those optionaly provided below will be sent along.</i></small><br>"
                 + "</body></html>";
         _mainExplanationLabel.setText(message);
+    }
 
-        _jnlpUrlLabel = new JLabel("JNLP URL:");
-        _panel.add(_jnlpUrlLabel);
-        _jnlpUrlField = new JTextField();
-        _panel.add(_jnlpUrlField);
-
-        _contactEmailLabel = new JLabel("Contact eMail:");
-        _panel.add(_contactEmailLabel);
-        _contactEmailField = new JTextField();
-        _panel.add(_contactEmailField);
+    private void finishFrameSetup() {
         // Automatically fulfill the email field with default shared user email (as in FeedbackReport), if any
         _userEmail = CommonPreferences.getInstance().getPreference(CommonPreferences.FEEDBACK_REPORT_USER_EMAIL);
         _contactEmailField.setText(_userEmail);
 
-        _silentlySubmitCheckBox = new JCheckBox("Silently submit forthcoming unknown applications ?");
-        _panel.add(_silentlySubmitCheckBox);
-        _submitButton = new JButton(_submitAction);
-        _submitButton.setText("Submit");
         getRootPane().setDefaultButton(_submitButton);
-        _panel.add(_submitButton);
-        _cancelButton = new JButton(_cancelAction);
-        _cancelButton.setText("Cancel");
-        _panel.add(_cancelButton);
-    }
-
-    /** Place graphical widgets on the window */
-    private void layoutWidgets() {
-        GroupLayout layout = new GroupLayout(_panel);
-        _panel.setLayout(layout);
-
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(_mainExplanationLabel)
-                .addGroup(layout.createParallelGroup().addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(_jnlpUrlLabel).addComponent(_contactEmailLabel))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(_jnlpUrlField).addComponent(_contactEmailField)))
-                .addGroup(layout.createSequentialGroup().addComponent(_silentlySubmitCheckBox).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_cancelButton).addComponent(_submitButton))));
-
-        layout.setVerticalGroup(
-                layout.createSequentialGroup().addComponent(_mainExplanationLabel)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(_jnlpUrlLabel).addComponent(_jnlpUrlField))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(_contactEmailLabel).addComponent(_contactEmailField))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(_cancelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_silentlySubmitCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_cancelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(_submitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-    }
-
-    /** Finish window setup */
-    private void prepareFrame() {
-        getContentPane().add(_panel);
-        pack();
-
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false);
 
         WindowUtils.centerOnMainScreen(this);
-
-        // Trap Escape key
-        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        // Trap command-W key
-        KeyStroke metaWStroke = KeyStroke.getKeyStroke(MainMenuBar.getSystemCommandKey() + "W");
-
-        // Close window on either strike
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                _logger.debug("Hiding about box on keyboard shortcut.");
-                setVisible(false);
-            }
-        };
-        getRootPane().registerKeyboardAction(actionListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        getRootPane().registerKeyboardAction(actionListener, metaWStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        WindowUtils.setClosingKeyboardShortcuts(this);
 
         // Show the dialog and wait for user inputs
+        pack();
         setVisible(true);
     }
 
-    /**
-     * @return true if the user choose to submit, false otherwise (cancel)
-     */
-    public boolean shouldSilentlySubmit() {
-        return _shouldSilentlySubmit;
-    }
-
-    /**
-     * @return true if the user choose to submit, false otherwise (cancel)
-     */
-    public boolean shouldSubmit() {
-        return _shouldSubmit;
-    }
-
-    /**
-     * @return the user email address if any, null otherwise.
-     */
-    public String getUserEmail() {
-        return _userEmail;
-    }
-
-    /**
-     * @return the JNLP URL address if any, null otherwise.
-     */
-    public String getJnlpURL() {
-        return _jnlpURL;
+    /** Create required actions */
+    private void setupActions() {
+        _submitAction = new SubmitAction();
+        _cancelAction = new CancelAction();
     }
 
     protected class SubmitAction extends AbstractAction {
@@ -254,11 +133,39 @@ public class ApplicationReportingForm extends JDialog {
             _logger.info("Cancelled SAMP application meta-data reporting.");
 
             // Reset state
-            initFields();
+            resetState();
 
             _logger.debug("Hiding dialog box on Submit button.");
             setVisible(false);
         }
+    }
+
+    /**
+     * @return true if the user choose to submit, false otherwise (cancel)
+     */
+    public boolean shouldSilentlySubmit() {
+        return _shouldSilentlySubmit;
+    }
+
+    /**
+     * @return true if the user choose to submit, false otherwise (cancel)
+     */
+    public boolean shouldSubmit() {
+        return _shouldSubmit;
+    }
+
+    /**
+     * @return the user email address if any, null otherwise.
+     */
+    public String getUserEmail() {
+        return _userEmail;
+    }
+
+    /**
+     * @return the JNLP URL address if any, null otherwise.
+     */
+    public String getJnlpURL() {
+        return _jnlpURL;
     }
 
     public static void main(String[] args) {
@@ -275,4 +182,113 @@ public class ApplicationReportingForm extends JDialog {
 
         System.exit(0);
     }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jPanel1 = new javax.swing.JPanel();
+        _mainExplanationLabel = new javax.swing.JEditorPane();
+        _jnlpUrlLabel = new javax.swing.JLabel();
+        _contactEmailLabel = new javax.swing.JLabel();
+        _jnlpUrlField = new javax.swing.JTextField();
+        _contactEmailField = new javax.swing.JTextField();
+        _silentlySubmitCheckBox = new javax.swing.JCheckBox();
+        _cancelButton = new javax.swing.JButton();
+        _submitButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Report New SAMP Application to JMMC Registry ?");
+        setAlwaysOnTop(true);
+        setModal(true);
+        setResizable(false);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        _mainExplanationLabel.setEditable(false);
+        _mainExplanationLabel.setBackground(jPanel1.getBackground());
+        _mainExplanationLabel.setOpaque(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        jPanel1.add(_mainExplanationLabel, gridBagConstraints);
+
+        _jnlpUrlLabel.setText("JNLP URL:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel1.add(_jnlpUrlLabel, gridBagConstraints);
+
+        _contactEmailLabel.setText("Contact eMail:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel1.add(_contactEmailLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(_jnlpUrlField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(_contactEmailField, gridBagConstraints);
+
+        _silentlySubmitCheckBox.setText("Silently submit forthcoming unknown applications ?");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(_silentlySubmitCheckBox, gridBagConstraints);
+
+        _cancelButton.setAction(_cancelAction);
+        _cancelButton.setText("Cancel");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        jPanel1.add(_cancelButton, gridBagConstraints);
+
+        _submitButton.setAction(_submitAction);
+        _submitButton.setText("Submit");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        jPanel1.add(_submitButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        getContentPane().add(jPanel1, gridBagConstraints);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton _cancelButton;
+    private javax.swing.JTextField _contactEmailField;
+    private javax.swing.JLabel _contactEmailLabel;
+    private javax.swing.JTextField _jnlpUrlField;
+    private javax.swing.JLabel _jnlpUrlLabel;
+    private javax.swing.JEditorPane _mainExplanationLabel;
+    private javax.swing.JCheckBox _silentlySubmitCheckBox;
+    private javax.swing.JButton _submitButton;
+    private javax.swing.JPanel jPanel1;
+    // End of variables declaration//GEN-END:variables
 }
