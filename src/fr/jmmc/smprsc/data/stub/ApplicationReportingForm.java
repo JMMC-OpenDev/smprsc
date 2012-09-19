@@ -33,7 +33,7 @@ public class ApplicationReportingForm extends javax.swing.JDialog {
     /** Hold user email address */
     private String _userEmail;
     /** Hold JNLP URL address */
-    private String _jnlpURL;
+    private String _applicationURL;
     // Action stuff
     /** Submit action */
     private SubmitAction _submitAction;
@@ -57,7 +57,7 @@ public class ApplicationReportingForm extends javax.swing.JDialog {
         _shouldSilentlySubmit = false;
         _shouldSubmit = false;
         _userEmail = null;
-        _jnlpURL = null;
+        _applicationURL = null;
     }
 
     private void setupMainExplanationLabel() {
@@ -112,7 +112,7 @@ public class ApplicationReportingForm extends javax.swing.JDialog {
             _shouldSilentlySubmit = _silentlySubmitCheckBox.isSelected();
             _shouldSubmit = true;
             _userEmail = _contactEmailField.getText();
-            _jnlpURL = _jnlpUrlField.getText();
+            _applicationURL = _jnlpUrlField.getText();
 
             _logger.debug("Hiding dialog box on Submit button.");
             setVisible(false);
@@ -164,8 +164,8 @@ public class ApplicationReportingForm extends javax.swing.JDialog {
     /**
      * @return the JNLP URL address if any, null otherwise.
      */
-    public String getJnlpURL() {
-        return _jnlpURL;
+    public String getApplicationURL() {
+        return _applicationURL;
     }
 
     public static void main(String[] args) {
@@ -176,9 +176,9 @@ public class ApplicationReportingForm extends javax.swing.JDialog {
         // Output user values
         System.out.println("User answered:");
         System.out.println(" _shouldSilentlySubmit = '" + form.shouldSilentlySubmit() + "'.");
-        System.out.println(" _shouldSubmit = '" + form.shouldSubmit() + "'.");
-        System.out.println(" _userEmail    = '" + form.getUserEmail() + "'.");
-        System.out.println(" _jnlpURL      = '" + form.getJnlpURL() + "'.");
+        System.out.println(" _shouldSubmit         = '" + form.shouldSubmit() + "'.");
+        System.out.println(" _userEmail            = '" + form.getUserEmail() + "'.");
+        System.out.println(" _applicationURL       = '" + form.getApplicationURL() + "'.");
 
         System.exit(0);
     }
@@ -221,7 +221,7 @@ public class ApplicationReportingForm extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         jPanel1.add(_mainExplanationLabel, gridBagConstraints);
 
-        _jnlpUrlLabel.setText("JNLP URL:");
+        _jnlpUrlLabel.setText("Application URL:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

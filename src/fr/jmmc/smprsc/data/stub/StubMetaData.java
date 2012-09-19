@@ -177,8 +177,8 @@ public class StubMetaData {
                             serializeMetaData(null, null); // Report without further data
                         } else { // Explicitly
                             final String userEmail = dialog.getUserEmail();
-                            final String jnlpURL = dialog.getJnlpURL();
-                            serializeMetaData(userEmail, jnlpURL);
+                            final String applicationURL = dialog.getApplicationURL();
+                            serializeMetaData(userEmail, applicationURL);
                         }
 
                         final String xmlRepresentation = marshallApplicationDescription();
@@ -243,9 +243,9 @@ public class StubMetaData {
 
     /**
      * @param userEmail 
-     * @param jnlpURL 
+     * @param applicationURL 
      */
-    private void serializeMetaData(String userEmail, String jnlpURL) {
+    private void serializeMetaData(String userEmail, String applicationURL) {
         System.out.println("serializeMetaData...1");
 
         fr.jmmc.smprsc.data.stub.model.Metadata tmp;
@@ -255,8 +255,8 @@ public class StubMetaData {
             tmp = new fr.jmmc.smprsc.data.stub.model.Metadata("email", userEmail);
             _data.getMetadatas().add(tmp);
         }
-        if ((jnlpURL != null) && (jnlpURL.length() > 0)) {
-            tmp = new fr.jmmc.smprsc.data.stub.model.Metadata(SampMetaData.JNLP_URL.id(), jnlpURL);
+        if ((applicationURL != null) && (applicationURL.length() > 0)) {
+            tmp = new fr.jmmc.smprsc.data.stub.model.Metadata(SampMetaData.HOMEPAGE_URL.id(), applicationURL);
             _data.getMetadatas().add(tmp);
         }
 
