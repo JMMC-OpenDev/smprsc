@@ -174,7 +174,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                     generatedHtml.append(value);
                 }
 
-                generatedHtml.append("<BR/><BR/>");
+                generatedHtml.append("<BR><BR>");
                 _logger.trace("\t- found meta data for '{}' = '{}'.", label, value);
             }
         }
