@@ -15,6 +15,7 @@ import fr.jmmc.jmcs.network.Http;
 import fr.jmmc.jmcs.network.PostQueryProcessor;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.FileUtils;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import fr.jmmc.smprsc.data.stub.model.SampStub;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -148,7 +149,7 @@ public class StubMetaData {
 
         try {
             // Try to load application icon resource
-            final URL fileURL = FileUtils.getResource(iconResourcePath);
+            final URL fileURL = ResourceUtils.getResource(iconResourcePath);
             if (fileURL != null) {
                 icon = new ImageIcon(fileURL);
             }
@@ -268,7 +269,7 @@ public class StubMetaData {
         final String path = SAMP_STUB_RESOURCE_DIRECTORY + applicationId + SAMP_STUB_FILE_EXTENSION;
 
         // Note : use input stream to avoid JNLP offline bug with URL (Unknown host exception)
-        final URL resourceURL = FileUtils.getResource(path);
+        final URL resourceURL = ResourceUtils.getResource(path);
 
         try {
             return (SampStub) JAXBUtils.loadObject(resourceURL, _jaxbFactory);

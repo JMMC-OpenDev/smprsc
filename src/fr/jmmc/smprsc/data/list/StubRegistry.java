@@ -5,7 +5,6 @@ package fr.jmmc.smprsc.data.list;
 
 import fr.jmmc.jmcs.jaxb.JAXBFactory;
 import fr.jmmc.jmcs.jaxb.JAXBUtils;
-import fr.jmmc.jmcs.util.FileUtils;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.list.model.Family;
 import fr.jmmc.smprsc.data.list.model.SampStubList;
@@ -17,6 +16,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import fr.jmmc.jmcs.util.CollectionUtils;
+import fr.jmmc.jmcs.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,14 +53,14 @@ public class StubRegistry {
         jf = JAXBFactory.getInstance(SAMP_STUB_LIST_JAXB_PACKAGE);
 
         // Try to load __index__.xml resource
-        final URL fileURL = FileUtils.getResource(SAMP_STUB_LIST_FILE_PATH);
+        final URL fileURL = ResourceUtils.getResource(SAMP_STUB_LIST_FILE_PATH);
         final SampStubList sampStubList;
-        try{
-            sampStubList = (SampStubList)JAXBUtils.loadObject(fileURL,jf);
+        try {
+            sampStubList = (SampStubList) JAXBUtils.loadObject(fileURL, jf);
         } catch (IOException ioe) {
             throw new IllegalStateException("Load failure on " + fileURL, ioe);
         }
-        
+
         // Members creation
         _knownApplicationNames = new ArrayList<String>();
         _categoryApplicationNames = new EnumMap<Category, List<String>>(Category.class);
