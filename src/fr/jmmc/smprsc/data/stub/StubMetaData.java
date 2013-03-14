@@ -1,8 +1,6 @@
-/**
- * *****************************************************************************
+/*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- *****************************************************************************
- */
+ ******************************************************************************/
 package fr.jmmc.smprsc.data.stub;
 
 import fr.jmmc.jmcs.data.preference.Preferences;
@@ -28,79 +26,49 @@ import javax.swing.ImageIcon;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.astrogrid.samp.Metadata;
 import org.astrogrid.samp.Subscriptions;
-import org.ivoa.util.concurrent.ThreadExecutors;
+import fr.jmmc.jmcs.util.concurrent.ThreadExecutors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Real SAMP application meta data older, that can report to JMMC central registry if not referenced yet.
  *
- * @author Sylvain LAFRASSE
+ * @author Sylvain LAFRASSE.
  */
 public class StubMetaData {
 
     // Constants
-    /**
-     * Package name for JAXB generated code
-     */
+    /** Package name for JAXB generated code */
     private final static String STUB_DATA_MODEL_JAXB_PATH = "fr.jmmc.smprsc.data.stub.model";
-    /**
-     * Base URL of the JMMC SAMP application meta data repository
-     */
+    /** Base URL of the JMMC SAMP application meta data repository */
     private final static String REGISTRY_BASE_URL = "http://jmmc.fr/~smprun/stubs/";//"http://jmmc.fr/~lafrasse/stubs/";
-    /**
-     * JMMC SAMP application meta data repository submission form name
-     */
+    /** JMMC SAMP application meta data repository submission form name */
     private final static String REGISTRY_SUBMISSION_FORM_NAME = "push.php";
-    /**
-     * JMMC SAMP application meta data repository directory containing all stubs definition files
-     */
+    /** JMMC SAMP application meta data repository directory containing all stubs definition files */
     private static final String SAMP_STUB_REGISTRY_DIRECTORY = "registry/";
-    /**
-     * Resource directory containing all SAMP application files
-     */
+    /** Resource directory containing all SAMP application files */
     private final static String SAMP_STUB_RESOURCE_DIRECTORY = "fr/jmmc/smprsc/registry/";
-    /**
-     * File extension of the JMMC SAMP application meta data file format
-     */
+    /** File extension of the JMMC SAMP application meta data file format */
     private final static String SAMP_STUB_FILE_EXTENSION = ".xml";
-    /**
-     * Application icon files extension
-     */
+    /** Application icon files extension */
     private final static String SAMP_STUB_ICON_FILE_EXTENSION = ".png";
     // Statics
-    /**
-     * Logger
-     */
+    /** Logger */
     private final static Logger _logger = LoggerFactory.getLogger(StubMetaData.class.getName());
-    /**
-     * JAXB initialization
-     */
+    /** JAXB initialization */
     private final static JAXBFactory _jaxbFactory = JAXBFactory.getInstance(STUB_DATA_MODEL_JAXB_PATH);
-    /**
-     * Loaded SampStub cache
-     */
+    /** Loaded SampStub cache */
     private final static Map<String, SampStub> _cachedSampStubs = new HashMap<String, SampStub>();
     // Members
-    /**
-     * SAMP application meta data container
-     */
+    /** SAMP application meta data container */
     private final SampStub _data = new SampStub();
-    /**
-     * Real application exact name
-     */
+    /** Real application exact name */
     private final String _applicationName;
-    /**
-     * Cleaned application exact name
-     */
+    /** Cleaned application exact name */
     private final String _applicationId;
-    /**
-     * Real application SAMP meta data
-     */
+    /** Real application SAMP meta data */
     private final Metadata _sampMetaData;
-    /**
-     * Real application SAMP mTypes
-     */
+    /** Real application SAMP mTypes */
     private final Subscriptions _sampSubscriptions;
 
     /**
