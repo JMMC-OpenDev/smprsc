@@ -3,8 +3,8 @@
  ******************************************************************************/
 package fr.jmmc.smprsc.data.list;
 
-import fr.jmmc.jmcs.jaxb.JAXBFactory;
-import fr.jmmc.jmcs.jaxb.JAXBUtils;
+import fr.jmmc.jmcs.util.jaxb.JAXBFactory;
+import fr.jmmc.jmcs.util.jaxb.JAXBUtils;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.list.model.Family;
 import fr.jmmc.smprsc.data.list.model.SampStubList;
