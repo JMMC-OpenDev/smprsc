@@ -5,11 +5,12 @@ package fr.jmmc.smprsc.data.list;
 
 import com.jidesoft.swing.CheckBoxTree;
 import com.jidesoft.swing.CheckBoxTreeSelectionModel;
-import fr.jmmc.jmcs.gui.PreferencesView;
-import fr.jmmc.jmcs.network.BrowserLauncher;
-import fr.jmmc.jmcs.network.interop.SampMetaData;
-import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.jmcs.data.MimeType;
+import fr.jmmc.jmcs.gui.PreferencesView;
+import fr.jmmc.jmcs.network.interop.SampMetaData;
+import fr.jmmc.jmcs.service.BrowserLauncher;
+import fr.jmmc.jmcs.util.CollectionUtils;
+import fr.jmmc.jmcs.util.ImageUtils;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.stub.StubMetaData;
 import fr.jmmc.smprsc.data.stub.model.Metadata;
@@ -30,7 +31,6 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
-import fr.jmmc.jmcs.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,7 +217,6 @@ public class ApplicationListSelectionPanel extends JPanel {
     private CheckBoxTree setupCheckBoxTree() {
 
         CheckBoxTree checkBoxTree = new CheckBoxTree(_treeDataModel) {
-
             @Override
             public Dimension getPreferredScrollableViewportSize() {
                 return new Dimension(TREE_WIDTH, PANEL_HEIGHT);
@@ -246,7 +245,6 @@ public class ApplicationListSelectionPanel extends JPanel {
     private void listenToSelections(final CheckBoxTree tree) {
 
         tree.addTreeSelectionListener(new TreeSelectionListener() {
-
             @Override
             public void valueChanged(TreeSelectionEvent e) {
                 _currentlySelectedApplicationName = null; // Reset selection memory
@@ -284,7 +282,6 @@ public class ApplicationListSelectionPanel extends JPanel {
     private void listenToChecks(final CheckBoxTree tree) {
 
         tree.getCheckBoxTreeSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-
             @Override
             public void valueChanged(TreeSelectionEvent e) {
 
@@ -377,7 +374,6 @@ public class ApplicationListSelectionPanel extends JPanel {
         descriptionEditorPane.setContentType("text/html");
 
         descriptionEditorPane.addHyperlinkListener(new HyperlinkListener() {
-
             @Override
             public void hyperlinkUpdate(HyperlinkEvent event) {
                 // When a link is clicked
@@ -425,7 +421,6 @@ public class ApplicationListSelectionPanel extends JPanel {
         final JCheckBox betaCheckBox = new JCheckBox("Use beta version");
 
         betaCheckBox.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 final boolean betaCheckBoxIsSelected = betaCheckBox.isSelected();
@@ -471,7 +466,6 @@ public class ApplicationListSelectionPanel extends JPanel {
         cliPathTextField.setMinimumSize(new Dimension(200, 20));
         cliPathTextField.setPreferredSize(new Dimension(200, 20));
         cliPathTextField.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 final String cliPath = cliPathTextField.getText();
