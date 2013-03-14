@@ -9,7 +9,7 @@ import fr.jmmc.jmcs.gui.PreferencesView;
 import fr.jmmc.jmcs.network.BrowserLauncher;
 import fr.jmmc.jmcs.network.interop.SampMetaData;
 import fr.jmmc.jmcs.util.ImageUtils;
-import fr.jmmc.jmcs.util.MimeType;
+import fr.jmmc.jmcs.data.MimeType;
 import fr.jmmc.smprsc.data.list.model.Category;
 import fr.jmmc.smprsc.data.stub.StubMetaData;
 import fr.jmmc.smprsc.data.stub.model.Metadata;
