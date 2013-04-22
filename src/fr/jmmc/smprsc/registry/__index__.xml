@@ -17,6 +17,7 @@
         <application>SAOImage_DS9</application>
     </family>
     <family category="WebApps">
+        <application>AMDA</application>
         <application>Simbad</application>
         <application>VizieR</application>
         <application>VOSED</application>
