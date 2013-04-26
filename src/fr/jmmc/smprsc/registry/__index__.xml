@@ -4,6 +4,7 @@
     <family category="Interferometry">
         <application>Aspro2</application>
         <application>LITpro</application>
+        <application>OIFits_Explorer</application>
         <application>SearchCal</application>
     </family>
     <family category="Essentials">
