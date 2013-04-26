@@ -10,7 +10,7 @@
     </metadata>
     <metadata>
         <key>x-samp.jnlp.beta.url</key>
-        <value>http://apps.jmmc.fr/~lafrasse/SearchCal/SearchCal.jnlp</value>
+        <value>http://apps.jmmc.fr/~betaswmgr/SearchCal/SearchCal.jnlp</value>
     </metadata>
     <metadata>
         <key>samp.description.text</key>
@@ -27,10 +27,6 @@
     <metadata>
         <key>x-samp.homepage.url</key>
         <value>http://www.jmmc.fr/searchcal</value>
-    </metadata>
-    <metadata>
-        <key>x-samp.jnlp.url</key>
-        <value>http://apps.jmmc.fr/~sclws/SearchCal/SearchCal.jnlp</value>
     </metadata>
     <metadata>
         <key>x-samp.release.date</key>
