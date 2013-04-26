@@ -35,8 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
- * @author lafrasse
+ * @author Sylvain LAFRASSE.
  */
 public class ApplicationListSelectionPanel extends JPanel {
 
@@ -123,14 +122,14 @@ public class ApplicationListSelectionPanel extends JPanel {
                 // Load application icons once and for all
                 ImageIcon resizedApplicationIcon = ImageUtils.getScaledImageIcon(applicationIcon, ICON_SIZE, ICON_SIZE);
                 _cachedApplicationIcons.put(applicationName, resizedApplicationIcon);
+                
+                // Load application's SAMP meta data from JAR
+                cacheApplicationMetaData(applicationName);
 
                 // Create application node
                 DefaultMutableTreeNode applicationNode = new DefaultMutableTreeNode(applicationName);
                 categoryNode.add(applicationNode);
                 _logger.trace("\t- found application '{}' with icon.", applicationName);
-
-                // Load application's SAMP meta data from JAR
-                cacheApplicationMetaData(applicationName);
             }
         }
 
