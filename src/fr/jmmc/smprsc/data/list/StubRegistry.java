@@ -17,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 import fr.jmmc.jmcs.util.CollectionUtils;
 import fr.jmmc.jmcs.util.ResourceUtils;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * smprsc access singleton.
- * 
+ *
  * @author Sylvain LAFRASSE
  */
 public class StubRegistry {
@@ -38,14 +40,15 @@ public class StubRegistry {
     /** internal JAXB Factory */
     private final JAXBFactory jf;
     /** Known application names list */
-    private List<String> _knownApplicationNames;
+    Set<String> _knownApplicationNames;
     /** Category's application names cache */
-    private Map<Category, List<String>> _categoryApplicationNames;
+    Map<Category, List<String>> _categoryApplicationNames;
     /** Category's visible application names cache */
-    private Map<Category, List<String>> _categoryVisibleApplicationNames;
+    Map<Category, List<String>> _categoryVisibleApplicationNames;
 
     /**
      * Private constructor called at static initialization.
+     *
      * @throws IllegalStateException if IO, JAXBException occurs during SampStubList retrieval
      */
     private StubRegistry() {
@@ -62,7 +65,7 @@ public class StubRegistry {
         }
 
         // Members creation
-        _knownApplicationNames = new ArrayList<String>();
+        _knownApplicationNames = new HashSet<String>(32);
         _categoryApplicationNames = new EnumMap<Category, List<String>>(Category.class);
         _categoryVisibleApplicationNames = new EnumMap<Category, List<String>>(Category.class);
 
