@@ -16,6 +16,7 @@
         <application>VOSpec</application>
         <application>gaia</application>
         <application>SAOImage_DS9</application>
+        <application>Iris</application>
     </family>
     <family category="WebApps">
         <application>AMDA</application>
