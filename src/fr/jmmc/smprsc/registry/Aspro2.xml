@@ -31,11 +31,7 @@
     <metadata>
         <key>x-samp.homepage.url</key>
         <value>http://www.jmmc.fr/aspro2</value>
-    </metadata>
-    <metadata>
-        <key>x-samp.jnlp.url</key>
-        <value>http://apps.jmmc.fr/~swmgr/Aspro2/Aspro2.jnlp</value>
-    </metadata>
+    </metadata>    
     <metadata>
         <key>x-samp.release.date</key>
         <value>14/03/2011</value>
