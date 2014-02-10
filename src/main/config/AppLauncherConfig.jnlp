@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<jnlp spec="1.0+" codebase="@GENERATED@" href="@GENERATED@">
+    <information>
+        <title>AppLauncher Configuration</title>
+        <vendor>JMMC (Jean-Marie MARIOTTI Center)</vendor>
+        <homepage href="http://www.jmmc.fr/applauncher"/>
+        <description>This bundles the AppLauncher configuration</description>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <!-- Configuration module -->
+        <jar href="jar/smprsc-1.0.0.jar" />
+    </resources>
+    <component-desc/>
+</jnlp>
