@@ -17,11 +17,6 @@
     <name>AppLauncherRegistry</name>
     <url>http://www.jmmc.fr/applauncher</url>
 
-    <properties>
-	<!-- do copy dependencies (JNLP) -->
-	<mdep.skip>false</mdep.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>fr.jmmc.jmcs</groupId>
