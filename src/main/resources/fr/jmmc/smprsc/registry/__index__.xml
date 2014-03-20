@@ -13,6 +13,7 @@
         <application>splat</application>
         <application>topcat</application>
         <application>VOPlot</application>        
+        <application>Cassis</application>
         <application>VOSpec</application>
         <application>gaia</application>
         <application>SAOImage_DS9</application>
