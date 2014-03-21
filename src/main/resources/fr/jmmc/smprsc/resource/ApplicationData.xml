@@ -17,17 +17,23 @@
         <feedback_form_url>http://jmmc.fr/feedback/smprun.php</feedback_form_url>
     </company>
 
-    <program name="AppLauncherConfig" version="2014.0204"/>
-    <compilation date="04/02/2014" compiler="JDK 1.6.0_24"/>
+    <program name="AppLauncherConfig" version="2014.0321"/>
+    <compilation date="21/03/2014" compiler="JDK 1.6.0_24"/>
 
     <text>AppLauncher Configuration Module to describe all JMMC applications and VO compliant tools.</text>
     <authors>the JMMC Technical Group</authors>
 
     <releasenotes>
+        <release version="2014.0321">
+            <pubDate>Fri, 21 Mar 2014 12:00:00 GMT</pubDate>
+            <prerelease version="2014.0321 beta 1">
+                <change type="FEATURE">Added Cassis and seleste applications.</change>
+            </prerelease>
+        </release>
         <release version="2014.0204">
             <pubDate>Tue, 04 Feb 2014 12:00:00 GMT</pubDate>
             <prerelease version="2014.0204 beta 1">
-                <change type="FEATURE">Initial configuration extracted from AppLauncher package</change>
+                <change type="FEATURE">Initial configuration extracted from AppLauncher package.</change>
             </prerelease>
         </release>
     </releasenotes>
