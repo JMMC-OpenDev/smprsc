@@ -10,7 +10,7 @@
     </metadata>
     <metadata>
         <key>x-samp.webapp.url</key>
-        <value>http://cdpp1.cesr.fr/AMDA-NG/</value>
+        <value>http://amda.cdpp.eu/</value>
     </metadata>
     <metadata>
         <key>author.affiliation</key>
@@ -22,6 +22,7 @@
     </metadata>
     <metadata>
         <key>home.page</key>
-        <value>http://cdpp1.cesr.fr/AMDA-NG/</value>
+        <value>http://amda.cdpp.eu/</value>
     </metadata>
+    <!-- TODO add list of capabilities -->
 </SampStub>
