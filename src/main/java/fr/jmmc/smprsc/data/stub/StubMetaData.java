@@ -129,6 +129,14 @@ public class StubMetaData {
     }
 
     /**
+     * @return application complete description as a String.
+     */
+    public String getApplicationDescription() {
+        serializeMetaData(null, null); // Report without further data
+        return marshallApplicationDescription();
+    }
+
+    /**
      * Upload application complete description to JMMC central repository (only if not known yet).
      *
      * @param preferenceInstance the jMCS Preference object in which silent report flag is stored
@@ -251,7 +259,6 @@ public class StubMetaData {
      * @param applicationURL
      */
     private void serializeMetaData(String userEmail, String applicationURL) {
-        System.out.println("serializeMetaData...1");
 
         fr.jmmc.smprsc.data.stub.model.Metadata tmp;
 
