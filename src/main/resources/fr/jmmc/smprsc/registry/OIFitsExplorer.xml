@@ -34,11 +34,11 @@
     </metadata>
     <metadata>
         <key>x-samp.release.date</key>
-        <value>13/07/2012</value>
+        <value>06/09/2013</value>
     </metadata>
     <metadata>
         <key>x-samp.release.version</key>
-        <value>0.1 beta 1</value>
+        <value>0.1.4</value>
     </metadata>
     <subscription>samp.app.ping</subscription>
     <subscription>samp.hub.disconnect</subscription>

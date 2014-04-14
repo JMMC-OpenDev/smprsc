@@ -26,18 +26,20 @@
     </metadata>
     <metadata>
         <key>authors</key>
-        <value>Peter W. Draper &amp; Mark B. Taylor</value>
+        <value>Peter W. Draper, Mark B. Taylor &amp; Margarida Castro Neves</value>
     </metadata>
     <metadata>
         <key>copyright</key>
         <value>Copyright (C) 2001-2005 Central Laboratory of the Research Councils
 Copyright (C) 2006-2008 Particle Physics and Astronomy Research Council
 Copyright (C) 2008-2009 Science and Technology Facilities Council
-Supported by the Joint Astronomy Centre Hawaii</value>
+Supported by the Joint Astronomy Centre Hawaii
+Copyright (C) 2010-2013 Peter W. Draper
+Copyright (C) 2013 German Astrophysical Virtual Observatory (GAVO)</value>
     </metadata>
     <metadata>
         <key>splat.version</key>
-        <value>3.9-6</value>
+        <value>3.10-0</value>
     </metadata>
     <metadata>
         <key>support.mail</key>
@@ -52,4 +54,6 @@ Supported by the Joint Astronomy Centre Hawaii</value>
     <subscription>samp.hub.event.unregister</subscription>
     <subscription>client.env.get</subscription>
     <subscription>spectrum.load.ssa-generic</subscription>
+    <subscription>table.load.fits</subscription>
+    <subscription>table.load.votable</subscription>
 </SampStub>

@@ -33,6 +33,8 @@
     <subscription>samp.hub.event.unregister</subscription>
     <subscription>client.env.get</subscription>
     <subscription>spectrum.load.ssa-generic</subscription>
+    <subscription>table.highlight.row</subscription>
     <subscription>table.load.fits</subscription>
     <subscription>table.load.votable</subscription>
+    <subscription>table.select.rowlist</subscription>
 </SampStub>

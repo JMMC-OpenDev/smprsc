@@ -47,7 +47,6 @@
     <subscription>samp.hub.event.shutdown</subscription>
     <subscription>samp.hub.event.subscriptions</subscription>
     <subscription>samp.hub.event.unregister</subscription>
-    <subscription>client.env.get</subscription>
     <subscription>table.highlight.row</subscription>
     <subscription>table.load.votable</subscription>
     <subscription>table.select.rowList</subscription>
