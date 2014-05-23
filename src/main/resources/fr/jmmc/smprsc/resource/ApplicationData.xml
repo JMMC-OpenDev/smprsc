@@ -24,6 +24,13 @@
     <authors>the JMMC Technical Group</authors>
 
     <releasenotes>
+      <!--
+        <release version="2014.XXXX">
+            <prerelease version="2014.XXXX beta 1">
+                <change type="CHANGE">Update splat logo.</change>
+            </prerelease>
+        </release>
+        -->
         <release version="2014.0414">
             <pubDate>Mon, 14 Apr 2014 12:00:00 GMT</pubDate>
             <prerelease version="2014.0414 beta 1">
