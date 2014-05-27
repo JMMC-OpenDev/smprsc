@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- *******************************************************************************
- * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
- *******************************************************************************
- -->
+*******************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+*******************************************************************************
+-->
 
 
 
@@ -43,7 +43,7 @@ Description: Store JMMC AppLauncher Stub list.
     </xsd:annotation>
 
 
-<!-- Elements -->
+    <!-- Elements -->
 
     <xsd:element name="SampStubList" type="SampStubList">
         <xsd:annotation>
@@ -54,7 +54,7 @@ Description: Store JMMC AppLauncher Stub list.
     </xsd:element>
 
 
-<!-- Class Types -->
+    <!-- Class Types -->
 
     <xsd:complexType name="SampStubList">
         <xsd:annotation>

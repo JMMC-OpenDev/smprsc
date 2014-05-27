@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SampStubList>
-     <!-- Categorized and alphabetically ordered application list -->
+    <!-- Categorized and alphabetically ordered application list -->
     <family category="Interferometry">
         <application>Aspro2</application>
         <application>LITpro</application>

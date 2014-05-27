@@ -122,7 +122,7 @@ public class ApplicationListSelectionPanel extends JPanel {
                 // Load application icons once and for all
                 ImageIcon resizedApplicationIcon = ImageUtils.getScaledImageIcon(applicationIcon, ICON_SIZE, ICON_SIZE);
                 _cachedApplicationIcons.put(applicationName, resizedApplicationIcon);
-                
+
                 // Load application's SAMP meta data from JAR
                 cacheApplicationMetaData(applicationName);
 
