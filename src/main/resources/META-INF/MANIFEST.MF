@@ -7,4 +7,4 @@ Implementation-URL: http://www.jmmc.fr
 Application-Name: AppLauncher-conf
 Codebase: *
 Application-Library-Allowable-Codebase: *
-Codebase: http://apps.jmmc.fr
+
