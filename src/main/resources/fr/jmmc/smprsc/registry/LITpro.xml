@@ -18,7 +18,7 @@
     </metadata>
     <metadata>
         <key>x-samp.authors</key>
-        <value>Brought to you by CRAL, IPAG and FIZEAU laboratories, and the JMMC Technical Group</value>
+        <value>Brought to you by CRAL, IPAG and LAGRANGE laboratories, and the JMMC Technical Group</value>
     </metadata>
     <metadata>
         <key>x-samp.homepage.url</key>
@@ -34,11 +34,11 @@
     </metadata>
     <metadata>
         <key>x-samp.release.date</key>
-        <value>21/02/2013</value>
+        <value>27/10/2015</value>
     </metadata>
     <metadata>
         <key>x-samp.release.version</key>
-        <value>1.0.13</value>
+        <value>1.0.16</value>
     </metadata>
     <metadata>
         <key>x-samp.releasenotes.url</key>
@@ -56,6 +56,7 @@
     <subscription>samp.hub.event.subscriptions</subscription>
     <subscription>samp.hub.event.unregister</subscription>
     <subscription>client.env.get</subscription>
+    <subscription>fr.jmmc.litpro.load.usermodel</subscription>
     <subscription>fr.jmmc.litpro.start.setting</subscription>
     <subscription>table.load.fits</subscription>
 </SampStub>
