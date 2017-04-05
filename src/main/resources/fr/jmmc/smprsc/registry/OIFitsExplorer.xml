@@ -22,11 +22,11 @@
     </metadata>
     <metadata>
         <key>x-samp.jnlp.url</key>
-        <value>http://apps.jmmc.fr/~swmgr/OIFitsExplorer/OIFitsExplorer.jnlp</value>
+        <value>http://www.jmmc.fr/apps/public/OIFitsExplorer/OIFitsExplorer.jnlp</value>
     </metadata>
     <metadata>
         <key>x-samp.jnlp.beta.url</key>
-        <value>http://apps.jmmc.fr/~betaswmgr/OIFitsExplorer/OIFitsExplorer.jnlp</value>
+        <value>http://www.jmmc.fr/apps/beta/OIFitsExplorer/OIFitsExplorer.jnlp</value>
     </metadata>
     <metadata>
         <key>x-samp.homepage.url</key>

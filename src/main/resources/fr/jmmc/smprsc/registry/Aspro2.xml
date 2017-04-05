@@ -34,11 +34,11 @@
     </metadata>
     <metadata>
         <key>x-samp.jnlp.url</key>
-        <value>http://apps.jmmc.fr/~swmgr/Aspro2/Aspro2.jnlp</value>
+        <value>http://www.jmmc.fr/apps/public/Aspro2/Aspro2.jnlp</value>
     </metadata>
     <metadata>
         <key>x-samp.jnlp.beta.url</key>
-        <value>http://apps.jmmc.fr/~betaswmgr/Aspro2/Aspro2.jnlp</value>
+        <value>http://www.jmmc.fr/apps/beta/Aspro2/Aspro2.jnlp</value>
     </metadata>
     <metadata>
         <key>x-samp.release.date</key>
