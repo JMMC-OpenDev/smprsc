@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SampStub uid="ETC-42">
+    <metadata>
+        <key>samp.name</key>
+        <value>ETC-42</value>
+    </metadata>
+    <metadata>
+        <key>samp.description.text</key>
+        <value>Exposure Time Calculator - 42</value>
+    </metadata>
+    <metadata>
+        <key>samp.documentation.url</key>
+        <value>https://projets.lam.fr/projects/etc/documents</value>
+    </metadata>
+    <metadata>
+        <key>x-samp.affiliation.name</key>
+        <value>LAM CeSAM (Laboratoire d'Astrophysique de Marseille Centre de Données Astrophysiques de Marseille)</value>
+    </metadata>
+    <metadata>
+        <key>x-samp.affiliation.url</key>
+        <value>http://www.lam.fr/cesam</value>
+    </metadata>
+    <metadata>
+        <key>x-samp.authors</key>
+        <value>Brought to you by the CeSAM department of LAM</value>
+    </metadata>
+    <metadata>
+        <key>x-samp.faq.url</key>
+        <value>https://projets.lam.fr/projects/etc/wiki/FAQ</value>
+    </metadata>
+    <metadata>
+
+        <key>x-samp.homepage.url</key>
+        <value>https://projets.lam.fr/projects/etc</value>
+    </metadata>
+    <metadata>
+
+        <key>x-samp.jnlp.url</key>
+        <value>http://cesam.lam.fr/Apps/ETC/webstart/launch.jnlp</value>
+    </metadata>
+
+    <metadata>
+        <key>x-samp.releasenotes.url</key>
+        <value>https://gitlab.lam.fr/etc42/ETC42/tags/</value>
+    </metadata>
+
+    <metadata>
+        <key>x-samp.release.date</key>
+        <value>15/05/2017</value>
+    </metadata>
+    <metadata>
+        <key>x-samp.release.version</key>
+        <value>1.0.0.3</value>
+    </metadata>
+</SampStub>
