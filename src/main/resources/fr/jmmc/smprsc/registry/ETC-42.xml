@@ -49,4 +49,12 @@
         <value>1.0.0.3</value>
     </metadata>
     <subscription>spectrum.load.ssa-generic</subscription>
+    <subscription>samp.hub.disconnect</subscription>
+    <subscription>samp.hub.event.metadata</subscription>
+    <subscription>samp.hub.event.register</subscription>
+    <subscription>samp.hub.event.shutdown</subscription>
+    <subscription>samp.hub.event.subscriptions</subscription>
+    <subscription>samp.hub.event.unregister</subscription>
+    <subscription>client.env.get</subscription>
+    <subscription>samp.app.ping</subscription>
 </SampStub>
