@@ -29,21 +29,17 @@
         <value>https://projets.lam.fr/projects/etc/wiki/FAQ</value>
     </metadata>
     <metadata>
-
         <key>x-samp.homepage.url</key>
         <value>https://projets.lam.fr/projects/etc</value>
     </metadata>
     <metadata>
-
         <key>x-samp.jnlp.url</key>
         <value>http://cesam.lam.fr/Apps/ETC/webstart/launch.jnlp</value>
     </metadata>
-
     <metadata>
         <key>x-samp.releasenotes.url</key>
         <value>https://gitlab.lam.fr/etc42/ETC42/tags/</value>
     </metadata>
-
     <metadata>
         <key>x-samp.release.date</key>
         <value>15/05/2017</value>
@@ -52,4 +48,5 @@
         <key>x-samp.release.version</key>
         <value>1.0.0.3</value>
     </metadata>
+    <subscription>spectrum.load.ssa-generic</subscription>
 </SampStub>
