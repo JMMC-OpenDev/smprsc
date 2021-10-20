@@ -42,11 +42,11 @@
     </metadata>
     <metadata>
         <key>x-samp.release.date</key>
-        <value>10/03/2017</value>
+        <value>08/09/2021</value>
     </metadata>
     <metadata>
         <key>x-samp.release.version</key>
-        <value>0.9.9.2</value>
+        <value>21.09</value>
     </metadata>
     <metadata>
         <key>x-samp.releasenotes.url</key>
@@ -64,5 +64,6 @@
     <subscription>samp.hub.event.subscriptions</subscription>
     <subscription>samp.hub.event.unregister</subscription>
     <subscription>client.env.get</subscription>
+    <subscription>fr.jmmc.aspro.load.observation</subscription>
     <subscription>table.load.votable</subscription>
 </SampStub>
