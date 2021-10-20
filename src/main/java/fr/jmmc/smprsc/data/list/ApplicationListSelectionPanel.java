@@ -113,7 +113,7 @@ public class ApplicationListSelectionPanel extends JPanel {
         descriptionPanel.add(cliPanel);
         descriptionPanel.add(_betaCheckBox);
         add(descriptionPanel, BorderLayout.CENTER);
-
+        
         changeBetaCheckBoxState(null);
         changeCliPathTextFieldValue(null);
     }
@@ -418,7 +418,6 @@ public class ApplicationListSelectionPanel extends JPanel {
 
         JScrollPane descriptionScrollPane = new JScrollPane(_descriptionEditorPane);
         final Dimension scrollPaneDimension = new Dimension(EDITOR_PANE_WIDTH, PANEL_HEIGHT);
-        descriptionScrollPane.setMaximumSize(scrollPaneDimension);
         descriptionScrollPane.setPreferredSize(scrollPaneDimension);
         descriptionScrollPane.setAlignmentX(CENTER_ALIGNMENT);
 
